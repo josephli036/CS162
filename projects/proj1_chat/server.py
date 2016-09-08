@@ -43,6 +43,7 @@ def process_message(message, server_socket, client_socket):
         for s in SOCKET_LIST:
             if s != server_socket and s != client_socket and s in channels[client_channel]:
                 message = '[' + client_info[s.getpeername()][0] + ']' + message
+                print message
                 s.send(message)
 
 
@@ -78,7 +79,7 @@ def server():
             elif sock == server_socket: 
                 new_socket, addr = server_socket.accept()
                 SOCKET_LIST.append(new_socket)
-                name = new_socket.recv(RECV_BUFFER)
+                name = new_socket.recv(RECV_BUFFER).rstrip()
                 client_info[addr] = (name, 'home')
                 channels['home'].append(new_socket)
                 print "%s has joined" % name
