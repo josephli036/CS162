@@ -39,7 +39,7 @@ def process_message(message, server_socket, client_socket):
         commands[command[0]](message, server_socket, client_socket)
     else:
         message.rstrip()
-        client_channel = client_info[s.getpeername()][1]
+        client_channel = client_info[client_socket.getpeername()][1]
         for s in SOCKET_LIST:
             if s != server_socket and s != client_socket and s in channels[client_channel]:
                 message = '[' + client_info[s.getpeername()][0] + ']' + message
