@@ -106,7 +106,6 @@ def server():
                     SOCKET_LIST.remove(sock)
                     channels[client_channel].remove(sock)
                     print str(e)
-                    return
             # a new connection request recieved
             elif sock == server_socket: 
                 new_socket, addr = server_socket.accept()
