@@ -127,9 +127,6 @@ def server():
             elif sock == server_socket: 
                 new_socket, addr = server_socket.accept()
                 SOCKET_LIST.append(new_socket)
-                name = new_socket.recv(4096)
-                process_message(name, server_socket, new_socket)
-                socket_info[new_socket] = ('', 'home')
                 channels['home'].append(new_socket)
  
 if __name__ == "__main__":
