@@ -64,9 +64,7 @@ def process_message(message, server_socket, client_socket):
             message_buffer[client_socket] = message_buffer[client_socket][utils.MESSAGE_LENGTH:]
         if client_socket not in initiated:
             initiated.append(client_socket)
-            print output
             socket_info[client_socket] = (output.rstrip(), 'home')
-            print socket_info[client_socket][0]
             return
         if output[0] == '/':
             command = output.rstrip().split()
@@ -74,13 +72,11 @@ def process_message(message, server_socket, client_socket):
                 commands[command[0]](command, server_socket, client_socket)
             except Exception, e:
                 single_client_message(utils.SERVER_INVALID_CONTROL_MESSAGE.format(command[0]), client_socket)
-                traceback.print_exc()
         else:
             client_channel = socket_info[client_socket][1]
             if client_channel == 'home':
                 single_client_message(utils.SERVER_CLIENT_NOT_IN_CHANNEL, client_socket)
             else:
-                print socket_info[client_socket][0]
                 channel_broadcast('[' + socket_info[client_socket][0] + '] ' + output, server_socket, client_socket)
 
 def single_client_message(message, client_socket):
@@ -116,12 +112,12 @@ def server():
                         process_message(message, server_socket, sock)
                     else:
                         SOCKET_LIST.remove(sock)
-                        # channels[client_channel].remove(sock)
+                        for channel in channels:
+                            if sock in channel:
+                                channel.remove(sock)
                         channel_broadcast(utils.SERVER_CLIENT_LEFT_CHANNEL.format(socket_info[sock][0]), server_socket, sock)
                         initiated.remove(sock)
                 except Exception, e:
-
-                    traceback.print_exc()
             # a new connection request recieved
             elif sock == server_socket: 
                 new_socket, addr = server_socket.accept()
