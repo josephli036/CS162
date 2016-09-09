@@ -3,6 +3,7 @@
 import sys
 import socket
 import select
+import utils
  
 def chat_client():
     if(len(sys.argv) < 3) :
@@ -19,35 +20,33 @@ def chat_client():
     try :
         s.connect((host, port))
     except :
-        print 'Unable to connect'
+        print sys.stdout.write(utils.CLIENT_CANNOT_CONNECT.format(host, port))
         sys.exit()
      
-    print 'Connected to remote host. You can start sending messages'
-    sys.stdout.write('[Me] '); sys.stdout.flush()
+    sys.stdout.write(utils.CLIENT_MESSAGE_PREFIX); sys.stdout.flush()
      
     while 1:
         socket_list = [s, sys.stdin]
          
-        # Get the list sockets which are readable
         ready_to_read,ready_to_write,in_error = select.select(socket_list , [], [])
          
         for sock in ready_to_read:             
             if sock == s:
-                # incoming message from remote server, s
-                data = sock.recv(4096)
-                if not data :
-                    print '\nDisconnected from chat server'
+                message = sock.recv(4096)
+                if not mesaage :
+                    print '\r' + utils.CLIENT_SERVER_DISCONNECTED.format(host, port)
                     sys.exit()
-                else :
-                    #print data
-                    sys.stdout.write(data)
-                    sys.stdout.write('[Me] '); sys.stdout.flush()     
-            
-            else :
+                else:
+                    sys.stdout.write('/r' + message)
+                    sys.stdout.write(utils.CLIENT_MESSAGE_PREFIX);
+                    sys.stdout.flush()     
+            else:
                 # user entered a message
                 msg = sys.stdin.readline()
+                msg += ' ' * (200 - len(msg))
                 s.send(msg)
-                sys.stdout.write('[Me] '); sys.stdout.flush() 
+                sys.stdout.write(utils.CLIENT_MESSAGE_PREFIX);
+                sys.stdout.flush()
 
 if __name__ == "__main__":
 
