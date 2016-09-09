@@ -64,7 +64,7 @@ def process_message(message, server_socket, client_socket):
             command = output.rstrip().split()
             try:
                 commands[command[0]](output, server_socket, client_socket)
-            except:
+            except Exception, e:
                 single_client_message(utils.SERVER_INVALID_CONTROL_MESSAGE.format(command[0]), client_socket)
                 traceback.print_exc()
         else:
