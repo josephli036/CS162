@@ -29,9 +29,11 @@ def join_channel(message, server_socket, client_socket):
         channel_broadcast(utils.SERVER_CLIENT_JOINED_CHANNEL.format(client[0]), server_socket, client_socket)
 
 def list_channel(message, server_socket, client_socket):
+    print client_info[sock.getpeername()][1]
     for channel in channels:
-        if channel != 'main':
+        if channel != 'home':
             client_socket.send[channel]
+            print channel
 
 def create_channel(message, server_socket, client_socket):
     if len(message) < 2:
@@ -74,7 +76,7 @@ def single_client_message(message, client_socket):
 def channel_broadcast(message, server_socket, client_socket):
     message = message.rstrip()
     client_channel = client_info[client_socket.getpeername()][1]
-    if client_channel == 'main':
+    if client_channel == 'home':
         single_client_message(utils.SERVER_CLIENT_NOT_IN_CHANNEL, client_socket)
     else:
         print message
