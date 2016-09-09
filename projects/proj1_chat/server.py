@@ -83,7 +83,7 @@ def channel_broadcast(message, server_socket, client_socket):
         for s in SOCKET_LIST:
             if s != server_socket and s != client_socket and s in channels[client_channel]:
                 message = '[' + client_info[s.getpeername()][0] + '] ' + message
-                message += '' * (200 - len(message))
+                message += '' * (utils.MESSAGE_LENGTH - len(message))
                 s.send(message)
 
 def server():
@@ -96,7 +96,7 @@ def server():
  
     while 1:
 
-        ready_to_read,ready_to_write,in_error = select.select(SOCKET_LIST,[],[],0)
+        ready_to_read,ready_to_write,in_error = select.select(SOCKET_LIST,[],[])
       
         for sock in ready_to_read:
             # client message recieved
@@ -112,7 +112,7 @@ def server():
                 except Exception, e:
                     SOCKET_LIST.remove(sock)
                     channels[client_channel].remove(sock)
-                    message_buffer
+                    channel_broadcast(utils.SERVER_CLIENT_JOINED_CHANNEL.format(client[0]), server_socket, client_socket)
 
                     traceback.print_exc()
             # a new connection request recieved

@@ -6,12 +6,13 @@ import select
 import utils
  
 def chat_client():
-    if(len(sys.argv) < 3) :
+    if(len(sys.argv) < 4) :
         print 'Usage : python chat_client.py hostname port'
         sys.exit()
 
-    host = sys.argv[1]
-    port = int(sys.argv[2])
+    host = sys.argv[2]
+    port = int(sys.argv[3])
+    name + sys.argv[1]
      
     s = socket.socket()
     s.settimeout(2)
@@ -22,6 +23,9 @@ def chat_client():
     except :
         print sys.stdout.write(utils.CLIENT_CANNOT_CONNECT.format(host, port))
         sys.exit()
+
+    name += ' ' * (utils.MESSAGE_LENGTH - len(name))
+    s.send(name)
      
     sys.stdout.write(utils.CLIENT_MESSAGE_PREFIX); sys.stdout.flush()
      
@@ -33,17 +37,19 @@ def chat_client():
         for sock in ready_to_read:             
             if sock == s:
                 message = sock.recv(4096)
-                if not mesaage :
+                if not message:
+                    sys.stdout.write(CLIENT_WIPE_ME)
                     print '\r' + utils.CLIENT_SERVER_DISCONNECTED.format(host, port)
                     sys.exit()
                 else:
+                    sys.stdout.write(CLIENT_WIPE_ME)
                     sys.stdout.write('/r' + message)
                     sys.stdout.write(utils.CLIENT_MESSAGE_PREFIX);
                     sys.stdout.flush()     
             else:
                 # user entered a message
                 msg = sys.stdin.readline()
-                msg += ' ' * (200 - len(msg))
+                msg += ' ' * (utils.MESSAGE_LENGTH - len(msg))
                 s.send(msg)
                 sys.stdout.write(utils.CLIENT_MESSAGE_PREFIX);
                 sys.stdout.flush()
