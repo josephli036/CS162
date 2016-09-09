@@ -66,6 +66,7 @@ def process_message(message, server_socket, client_socket):
             message_buffer.pop(client_address)
         else:
             message_buffer[client_address] = message_buffer[client_address][utils.MESSAGE_LENGTH:]
+        print output
         if output[0] == '/':
             command = output.rstrip().split()
             try:
