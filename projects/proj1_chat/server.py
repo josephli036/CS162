@@ -64,6 +64,7 @@ def process_message(message, server_socket, client_socket):
             message_buffer[client_socket] = message_buffer[client_socket][utils.MESSAGE_LENGTH:]
         if client_socket not in initiated:
             initiated.append(client_socket)
+            print output
             socket_info[client_socket] = (output.rstrip(), 'home')
             return
         if output[0] == '/':
@@ -118,10 +119,6 @@ def server():
                         channel_broadcast(utils.SERVER_CLIENT_LEFT_CHANNEL.format(socket_info[sock][0]), server_socket, sock)
                         initiated.remove(socket)
                 except Exception, e:
-                    SOCKET_LIST.remove(sock)
-                    channels[client_channel].remove(sock)
-                    channel_broadcast(utils.SERVER_CLIENT_LEFT_CHANNEL.format(socket_info[sock][0]), server_socket, sock)
-                    initiated.remove(socket)
 
                     traceback.print_exc()
             # a new connection request recieved
