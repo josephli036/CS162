@@ -10,8 +10,6 @@ SOCKET_LIST = []
 # Maps channel name to list of sockets in the channel
 channels = {'home':[]}
 
-# Maps address to (name, channel)
-client_info = {}
 RECV_BUFFER = 4096
 message_buffer = {}
 
@@ -24,16 +22,15 @@ def join_channel(message, server_socket, client_socket):
     elif message[1] not in channels or message[1] == 'home':
         single_client_message(utils.SERVER_NO_CHANNEL_EXISTS.format(message[1]), client_socket)
     else:
-        client = client_info[client_socket.getpeername()]
+        client = socket_info[client_socket]
         channel_broadcast(utils.SERVER_CLIENT_LEFT_CHANNEL.format(client[0]), server_socket, client_socket)
         channels[client[1]].remove(client_socket)
         channels[message[1]].append(client_socket)
-        client_info[client_socket.getpeername()] = (client[0], message[1])
         socket_info[client_socket] = (client[0], message[1])
         channel_broadcast(utils.SERVER_CLIENT_JOINED_CHANNEL.format(client[0]), server_socket, client_socket)
 
 def list_channel(message, server_socket, client_socket):
-    channel = client_info[client_socket.getpeername()][1]
+    channel = socket_info[client_socket][1]
     for channel in channels:
         if channel != 'home':
             single_client_message(channel, client_socket)
@@ -44,12 +41,11 @@ def create_channel(message, server_socket, client_socket):
     elif message[1] in channels:
         single_client_message(utils.SERVER_CHANNEL_EXISTS.format(message[1]), client_socket)
     else:
-        client = client_info[client_socket.getpeername()]
+        client = client_socket[client_socket]
         if client[1] != 'home':
             channel_broadcast(utils.SERVER_CLIENT_LEFT_CHANNEL.format(client[0]), server_socket, client_socket)
         channels[client[1]].remove(client_socket)
         channels[message[1]] = [client_socket]
-        client_info[client_socket.getpeername()] = (client[0], message[1])
         socket_info[client_socket] = (client[0], message[1])
 
 commands = {'/join': join_channel, '/list': list_channel, '/create': create_channel}
@@ -75,11 +71,11 @@ def process_message(message, server_socket, client_socket):
                 single_client_message(utils.SERVER_INVALID_CONTROL_MESSAGE.format(command[0]), client_socket)
                 traceback.print_exc()
         else:
-            client_channel = client_info[client_socket.getpeername()][1]
+            client_channel = socket_info[client_socket][1]
             if client_channel == 'home':
                 single_client_message(utils.SERVER_CLIENT_NOT_IN_CHANNEL, client_socket)
             else:
-                channel_broadcast('[' + client_info[client_socket.getpeername()][0] + '] ' + output, server_socket, client_socket)
+                channel_broadcast('[' + socket_info[client_socket][0] + '] ' + output, server_socket, client_socket)
 
 def single_client_message(message, client_socket):
     message += '' * (200 - len(message))
@@ -109,13 +105,14 @@ def server():
             # client message recieved
             if sock != server_socket:
                 try:
-                    client_channel = client_info[sock.getpeername()][1]
+                    client_channel = socket_info[sock][1]
                     message = sock.recv(RECV_BUFFER)
                     if message:
                         process_message(message, server_socket, sock)
                     else:
                         SOCKET_LIST.remove(sock)
                         channels[client_channel].remove(sock)
+                        channel_broadcast(utils.SERVER_CLIENT_LEFT_CHANNEL.format(socket_info[sock][0]), server_socket, sock)
                 except Exception, e:
                     SOCKET_LIST.remove(sock)
                     channels[client_channel].remove(sock)
@@ -127,7 +124,6 @@ def server():
                 new_socket, addr = server_socket.accept()
                 SOCKET_LIST.append(new_socket)
                 name = new_socket.recv(RECV_BUFFER).rstrip()
-                client_info[addr] = (name, 'home')
                 socket_info[new_socket] = (name, 'home')
                 channels['home'].append(new_socket)
                 print "%s has joined" % name
