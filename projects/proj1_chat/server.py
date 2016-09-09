@@ -64,7 +64,7 @@ def process_message(message, server_socket, client_socket):
             message_buffer[client_socket] = message_buffer[client_socket][utils.MESSAGE_LENGTH:]
         if client_socket not in initiated:
             initiated.append(client_socket)
-            socket_info[client_socket] = (output.rstrip(), socket_info[client_socket][1])
+            socket_info[client_socket] = (output.rstrip(), 'home')
             return
         if output[0] == '/':
             command = output.rstrip().split()
