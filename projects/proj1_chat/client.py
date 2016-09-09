@@ -38,7 +38,7 @@ def chat_client():
             if sock == s:
                 message = sock.recv(4096)
                 if not message:
-                    sys.stdout.write(CLIENT_WIPE_ME)
+                    sys.stdout.write(utils.CLIENT_WIPE_ME)
                     print '\r' + utils.CLIENT_SERVER_DISCONNECTED.format(host, port)
                     sys.exit()
                 else:
