@@ -111,13 +111,12 @@ def server():
             # client message recieved
             if sock != server_socket:
                 try:
-                    client_channel = socket_info[sock][1]
                     message = sock.recv(4096)
                     if message:
                         process_message(message, server_socket, sock)
                     else:
                         SOCKET_LIST.remove(sock)
-                        channels[client_channel].remove(sock)
+                        # channels[client_channel].remove(sock)
                         channel_broadcast(utils.SERVER_CLIENT_LEFT_CHANNEL.format(socket_info[sock][0]), server_socket, sock)
                         initiated.remove(sock)
                 except Exception, e:
