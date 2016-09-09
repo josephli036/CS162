@@ -56,11 +56,11 @@ def process_message(message, server_socket, client_socket):
         message_buffer[client_socket] = message
     if len(message_buffer[client_socket]) >= utils.MESSAGE_LENGTH:
         output = message_buffer[client_socket][:utils.MESSAGE_LENGTH]
-        message_buffer.pop(client_socket)
-        # if len(message_buffer[client_socket]) == utils.MESSAGE_LENGTH:
-            # message_buffer.pop(client_socket)
-        # else:
-        #     message_buffer[client_socket] = message_buffer[client_socket][utils.MESSAGE_LENGTH:]
+        # message_buffer.pop(client_socket)
+        if len(message_buffer[client_socket]) == utils.MESSAGE_LENGTH:
+            message_buffer.pop(client_socket)
+        else:
+            message_buffer[client_socket] = message_buffer[client_socket][utils.MESSAGE_LENGTH:]
         print output
         if output[0] == '/':
             command = output.rstrip().split()
@@ -122,7 +122,7 @@ def server():
             elif sock == server_socket: 
                 new_socket, addr = server_socket.accept()
                 SOCKET_LIST.append(new_socket)
-                name = new_socket.recv(RECV_BUFFER).rstrip()
+                name = new_socket.recv().rstrip()
                 socket_info[new_socket] = (name, 'home')
                 channels['home'].append(new_socket)
                 print "%s has joined" % name
