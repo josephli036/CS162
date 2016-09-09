@@ -12,7 +12,7 @@ def chat_client():
 
     host = sys.argv[2]
     port = int(sys.argv[3])
-    name + sys.argv[1]
+    name = sys.argv[1]
      
     s = socket.socket()
     s.settimeout(2)
