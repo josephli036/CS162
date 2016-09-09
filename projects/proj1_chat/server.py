@@ -54,18 +54,19 @@ def process_message(message, server_socket, client_socket):
         message_buffer[client_address] += message
     else:
         message_buffer[client_address] = message
-    if len(message_buffer[client_address]) >= 200:
-        output = message_buffer[client_address][:200]
-        if len(message_buffer[client_address]) == 200:
+    if len(message_buffer[client_address]) >= utils.MESSAGE_LENGTH:
+        output = message_buffer[client_address][:utils.MESSAGE_LENGTH]
+        if len(message_buffer[client_address]) == utils.MESSAGE_LENGTH:
             message_buffer.pop(client_address)
         else:
-            message_buffer[client_address] = message_buffer[client_address][200:]
+            message_buffer[client_address] = message_buffer[client_address][utils.MESSAGE_LENGTH:]
         if output[0] == '/':
             command = output.rstrip().split()
             try:
                 commands[command[0]](output, server_socket, client_socket)
             except:
                 single_client_message(utils.SERVER_INVALID_CONTROL_MESSAGE.format(command[0]), client_socket)
+                traceback.print_exc()
         else:
             channel_broadcast(output, server_socket, client_socket)
 
