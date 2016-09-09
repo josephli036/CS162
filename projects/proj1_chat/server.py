@@ -57,7 +57,7 @@ def process_message(message, server_socket, client_socket):
         if len(message_buffer[client_address]) == 200:
             message_buffer.pop(client_address)
         else:
-            message_buffer[client_address] = message_buffer[client_socket][200:]
+            message_buffer[client_address] = message_buffer[client_address][200:]
         if output[0] == '/':
             command = output.rstrip().split()
             try:
