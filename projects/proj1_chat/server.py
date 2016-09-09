@@ -63,7 +63,7 @@ def process_message(message, server_socket, client_socket):
         else:
             message_buffer[client_socket] = message_buffer[client_socket][utils.MESSAGE_LENGTH:]
         if client_socket not in initiated:
-            initiated.append(client_socket):
+            initiated.append(client_socket)
             socket_info[client_socket] = (output.rstrip(), socket_info[client_socket][1])
             return
         if output[0] == '/':
