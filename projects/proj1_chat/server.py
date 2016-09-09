@@ -2,7 +2,7 @@ import sys
 import socket
 import select
 import utils
-import traceback
+
 
 PORT = 0
 SOCKET_LIST = []
