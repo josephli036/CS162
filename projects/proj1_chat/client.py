@@ -43,7 +43,7 @@ def chat_client():
                     sys.exit()
                 else:
                     sys.stdout.write(utils.CLIENT_WIPE_ME)
-                    sys.stdout.write('/r' + message)
+                    sys.stdout.write('\r' + message)
                     sys.stdout.write(utils.CLIENT_MESSAGE_PREFIX);
                     sys.stdout.flush()     
             else:
