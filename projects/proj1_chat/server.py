@@ -104,26 +104,23 @@ def server():
         ready_to_read,ready_to_write,in_error = select.select(SOCKET_LIST,[],[])
       
         for sock in ready_to_read:
+
             # client message recieved
             if sock != server_socket:
                 try:
-                    message = sock.recv(4096)
+                    message = sock.recv(200)
                     if message:
                         process_message(message, server_socket, sock)
                     else:
                         SOCKET_LIST.remove(sock)
-
                         for channel in channels:
-
                             if sock in channel:
                                 channel.remove(sock)
-
                         channel_broadcast(utils.SERVER_CLIENT_LEFT_CHANNEL.format(socket_info[sock][0]), server_socket, sock)
                         initiated.remove(sock)
-
                 except Exception, e:
                     continue;
-                    
+
             # a new connection request recieved
             elif sock == server_socket:
 
