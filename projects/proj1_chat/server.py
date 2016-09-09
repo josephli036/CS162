@@ -2,6 +2,7 @@ import sys
 import socket
 import select
 import utils
+import traceback
 
 PORT = 0
 SOCKET_LIST = []
@@ -29,7 +30,8 @@ def join_channel(message, server_socket, client_socket):
 
 def list_channel(message, server_socket, client_socket):
     for channel in channels:
-        client_socket.send[channel]
+        if channel != 'main':
+            client_socket.send[channel]
 
 def create_channel(message, server_socket, client_socket):
     if len(message) < 2:
@@ -72,12 +74,15 @@ def single_client_message(message, client_socket):
 def channel_broadcast(message, client_socket):
     message = message.rstrip()
     client_channel = client_info[client_socket.getpeername()][1]
-    print message
-    for s in SOCKET_LIST:
-        if s != server_socket and s != client_socket and s in channels[client_channel]:
-            message = '[' + client_info[s.getpeername()][0] + ']' + message
-            message += '' * (200 - len(message))
-            s.send(message)
+    if client_channel == 'main':
+        single_client_message(utils.SERVER_CLIENT_NOT_IN_CHANNEL, client_socket)
+    else:
+        print message
+        for s in SOCKET_LIST:
+            if s != server_socket and s != client_socket and s in channels[client_channel]:
+                message = '[' + client_info[s.getpeername()][0] + '] ' + message
+                message += '' * (200 - len(message))
+                s.send(message)
 
 def server():
 
@@ -105,7 +110,9 @@ def server():
                 except Exception, e:
                     SOCKET_LIST.remove(sock)
                     channels[client_channel].remove(sock)
-                    print str(e)
+                    message_buffer
+
+                    traceback.print_exc()
             # a new connection request recieved
             elif sock == server_socket: 
                 new_socket, addr = server_socket.accept()
