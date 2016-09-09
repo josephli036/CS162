@@ -25,7 +25,7 @@ def join_channel(message, server_socket, client_socket):
         channel_broadcast(utils.SERVER_CLIENT_LEFT_CHANNEL.format(client[0]), server_socket, client_socket)
         channels[client[1]].remove(client_socket)
         channels[message[1]].append(client_socket)
-        client_info[s.getpeername()] = (client[0], message[1])
+        client_info[client_socket.getpeername()] = (client[0], message[1])
         channel_broadcast(utils.SERVER_CLIENT_JOINED_CHANNEL.format(client[0]), server_socket, client_socket)
 
 def list_channel(message, server_socket, client_socket):
@@ -41,10 +41,10 @@ def create_channel(message, server_socket, client_socket):
     elif message[1] in channels:
         single_client_message(utils.SERVER_CHANNEL_EXISTS.format(message[1]), client_socket)
     else:
-        client_channel = client_info[s.getpeername()]
-        channels[client_channel[1]].remove(client_socket)
+        client = client_info[client_socket.getpeername()]
+        channels[client[1]].remove(client_socket)
         channels[message[1]] = [client_socket]
-        client_info[s.getpeername()] = (client_channel[0], message[1])
+        client_info[client_socket.getpeername()] = (client[0], message[1])
 
 commands = {'/join': join_channel, '/list': list_channel, '/create': create_channel}
 
