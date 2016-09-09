@@ -12,8 +12,10 @@ channels = {'home':[]}
 # Maps socket to its message buffer
 message_buffer = {}
 
-#mapping from socket to name
+# Mapping from socket to (name, channel name)
 socket_info = {}
+
+initiated = []
 
 def join_channel(message, server_socket, client_socket):
     if len(message) < 2:
@@ -56,12 +58,14 @@ def process_message(message, server_socket, client_socket):
         message_buffer[client_socket] = message
     if len(message_buffer[client_socket]) >= utils.MESSAGE_LENGTH:
         output = message_buffer[client_socket][:utils.MESSAGE_LENGTH]
-        message_buffer.pop(client_socket)
-        # if len(message_buffer[client_socket]) == utils.MESSAGE_LENGTH:
-        #     message_buffer.pop(client_socket)
-        # else:
-        #     message_buffer[client_socket] = message_buffer[client_socket][utils.MESSAGE_LENGTH:]
-        print output
+        if len(message_buffer[client_socket]) == utils.MESSAGE_LENGTH:
+            message_buffer.pop(client_socket)
+        else:
+            message_buffer[client_socket] = message_buffer[client_socket][utils.MESSAGE_LENGTH:]
+        if client_socket not in initiated:
+            initiated.append(client_socket):
+            socket_info[client_socket] = (output.rstrip(), socket_info[client_socket][1])
+            return
         if output[0] == '/':
             command = output.rstrip().split()
             try:
@@ -112,21 +116,22 @@ def server():
                         SOCKET_LIST.remove(sock)
                         channels[client_channel].remove(sock)
                         channel_broadcast(utils.SERVER_CLIENT_LEFT_CHANNEL.format(socket_info[sock][0]), server_socket, sock)
+                        initiated.remove(socket)
                 except Exception, e:
                     SOCKET_LIST.remove(sock)
                     channels[client_channel].remove(sock)
                     channel_broadcast(utils.SERVER_CLIENT_LEFT_CHANNEL.format(socket_info[sock][0]), server_socket, sock)
+                    initiated.remove(socket)
 
                     traceback.print_exc()
             # a new connection request recieved
             elif sock == server_socket: 
                 new_socket, addr = server_socket.accept()
                 SOCKET_LIST.append(new_socket)
-                name = new_socket.recv(4096).rstrip()
-                socket_info[new_socket] = (name, 'home')
+                name = new_socket.recv(4096)
+                process_message(name, server_socket, new_socket)
+                socket_info[new_socket] = ('', 'home')
                 channels['home'].append(new_socket)
-                print "%s has joined" % name
-
  
 if __name__ == "__main__":
 
