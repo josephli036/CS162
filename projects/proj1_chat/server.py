@@ -118,7 +118,7 @@ def server():
                 except Exception, e:
                     SOCKET_LIST.remove(sock)
                     channels[client_channel].remove(sock)
-                    channel_broadcast(utils.SERVER_CLIENT_LEFT_CHANNEL.format(socket_names[sock][0]), server_socket, sock)
+                    channel_broadcast(utils.SERVER_CLIENT_LEFT_CHANNEL.format(socket_info[sock][0]), server_socket, sock)
 
                     traceback.print_exc()
             # a new connection request recieved
