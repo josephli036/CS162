@@ -17,9 +17,9 @@ message_buffer = {}
 
 def join_channel(message, server_socket, client_socket):
     if len(message) < 2:
-        single_client_message(utils.SERVER_NO_CHANNEL_EXISTS.format(message[1]), client_socket)
-    elif message[1] not in channels:
         single_client_message(utils.SERVER_JOIN_REQUIRES_ARGUMENT.format(message[1]), client_socket)
+    elif message[1] not in channels or message[1] == 'home':
+        single_client_message(utils.SERVER_NO_CHANNEL_EXISTS.format(message[1]), client_socket)
     else:
         client = client_info[s.getpeername()]
         channel_broadcast(utils.SERVER_CLIENT_LEFT_CHANNEL.format(client[0]), server_socket, client_socket)
@@ -62,7 +62,7 @@ def process_message(message, server_socket, client_socket):
         if output[0] == '/':
             command = output.rstrip().split()
             try:
-                commands[command[0]](output, server_socket, client_socket)
+                commands[command[0]](command, server_socket, client_socket)
             except Exception, e:
                 single_client_message(utils.SERVER_INVALID_CONTROL_MESSAGE.format(command[0]), client_socket)
                 traceback.print_exc()
