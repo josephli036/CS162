@@ -16,16 +16,16 @@ message_buffer = {}
 
 def join_channel(message, server_socket, client_socket):
     if len(message) < 2:
-        single_client_message(SERVER_NO_CHANNEL_EXISTS.format(message[1]), client_socket)
+        single_client_message(utils.SERVER_NO_CHANNEL_EXISTS.format(message[1]), client_socket)
     elif message[1] not in channels:
-        single_client_message(SERVER_JOIN_REQUIRES_ARGUMENT.format(message[1]), client_socket)
+        single_client_message(utils.SERVER_JOIN_REQUIRES_ARGUMENT.format(message[1]), client_socket)
     else:
         client = client_info[s.getpeername()]
-        channel_broadcast(SERVER_CLIENT_LEFT_CHANNEL.format(client[0]))
+        channel_broadcast(utils.SERVER_CLIENT_LEFT_CHANNEL.format(client[0]))
         channels[client[1]].remove(client_socket)
         channels[message[1]].append(client_socket)
         client_info[s.getpeername()] = (client[0], message[1])
-        channel_broadcast(SERVER_CLIENT_JOINED_CHANNEL.format(client[0]))
+        channel_broadcast(utils.SERVER_CLIENT_JOINED_CHANNEL.format(client[0]))
 
 def list_channel(message, server_socket, client_socket):
     for channel in channels:
@@ -33,9 +33,9 @@ def list_channel(message, server_socket, client_socket):
 
 def create_channel(message, server_socket, client_socket):
     if len(message) < 2:
-        single_client_message(SERVER_CREATE_REQUIRES_ARGUMENT.format(message[1]), client_socket)
+        single_client_message(utils.SERVER_CREATE_REQUIRES_ARGUMENT.format(message[1]), client_socket)
     elif message[1] in channel:
-        single_client_message(SERVER_CHANNEL_EXISTS.format(message[1]), client_socket)
+        single_client_message(utils.SERVER_CHANNEL_EXISTS.format(message[1]), client_socket)
     else:
         client_channel = client_info[s.getpeername()]
         channels[client_channel[1]].remove(client_socket)
@@ -61,7 +61,7 @@ def process_message(message, server_socket, client_socket):
             try:
                 commands[command[0]](output, server_socket, client_socket)
             except:
-                single_client_message(SERVER_INVALID_CONTROL_MESSAGE.format(command[0]), client_socket)
+                single_client_message(utils.SERVER_INVALID_CONTROL_MESSAGE.format(command[0]), client_socket)
         else:
             channel_broadcast(output, client_socket)
 
