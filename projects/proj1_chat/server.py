@@ -81,7 +81,7 @@ def channel_broadcast(message, client_socket):
 
 def server():
 
-    server_socket = socket.socket()
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind(('127.0.0.1', PORT)) 
     server_socket.listen(10)
 
