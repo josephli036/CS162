@@ -9,8 +9,7 @@ SOCKET_LIST = []
 
 # Maps channel name to list of sockets in the channel
 channels = {'home':[]}
-
-RECV_BUFFER = 4096
+# Maps socket to its message buffer
 message_buffer = {}
 
 #mapping from socket to name
@@ -51,17 +50,16 @@ def create_channel(message, server_socket, client_socket):
 commands = {'/join': join_channel, '/list': list_channel, '/create': create_channel}
 
 def process_message(message, server_socket, client_socket):
-    client_address = client_socket.getpeername()
-    if client_address in message_buffer:
-        message_buffer[client_address] += message
+    if client_socket in message_buffer:
+        message_buffer[client_socket] += message
     else:
-        message_buffer[client_address] = message
-    if len(message_buffer[client_address]) >= utils.MESSAGE_LENGTH:
-        output = message_buffer[client_address][:utils.MESSAGE_LENGTH]
-        if len(message_buffer[client_address]) == utils.MESSAGE_LENGTH:
-            message_buffer.pop(client_address)
+        message_buffer[client_socket] = message
+    if len(message_buffer[client_socket]) >= utils.MESSAGE_LENGTH:
+        output = message_buffer[client_socket][:utils.MESSAGE_LENGTH]
+        if len(message_buffer[client_socket]) == utils.MESSAGE_LENGTH:
+            message_buffer.pop(client_socket)
         else:
-            message_buffer[client_address] = message_buffer[client_address][utils.MESSAGE_LENGTH:]
+            message_buffer[client_socket] = message_buffer[client_socket][utils.MESSAGE_LENGTH:]
         print output
         if output[0] == '/':
             command = output.rstrip().split()
@@ -106,7 +104,7 @@ def server():
             if sock != server_socket:
                 try:
                     client_channel = socket_info[sock][1]
-                    message = sock.recv(RECV_BUFFER)
+                    message = sock.recv()
                     if message:
                         process_message(message, server_socket, sock)
                     else:
