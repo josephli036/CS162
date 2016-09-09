@@ -80,12 +80,11 @@ def single_client_message(message, client_socket):
 def channel_broadcast(message, server_socket, client_socket):
     message = message.rstrip()
     client_channel = client_info[client_socket.getpeername()][1]
-    else:
-        print message
-        for s in SOCKET_LIST:
-            if s != server_socket and s != client_socket and s in channels[client_channel]:
-                message += '' * (utils.MESSAGE_LENGTH - len(message))
-                s.send(message)
+    print message
+    for s in SOCKET_LIST:
+        if s != server_socket and s != client_socket and s in channels[client_channel]:
+            message += '' * (utils.MESSAGE_LENGTH - len(message))
+            s.send(message)
 
 def server():
 
