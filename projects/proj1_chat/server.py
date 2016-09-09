@@ -29,6 +29,7 @@ def join_channel(message, server_socket, client_socket):
         channels[client[1]].remove(client_socket)
         channels[message[1]].append(client_socket)
         client_info[client_socket.getpeername()] = (client[0], message[1])
+        socket_info[client_socket] = (client[0], message[1])
         channel_broadcast(utils.SERVER_CLIENT_JOINED_CHANNEL.format(client[0]), server_socket, client_socket)
 
 def list_channel(message, server_socket, client_socket):
@@ -49,6 +50,7 @@ def create_channel(message, server_socket, client_socket):
         channels[client[1]].remove(client_socket)
         channels[message[1]] = [client_socket]
         client_info[client_socket.getpeername()] = (client[0], message[1])
+        socket_info[client_socket] = (client[0], message[1])
 
 commands = {'/join': join_channel, '/list': list_channel, '/create': create_channel}
 
@@ -125,7 +127,7 @@ def server():
                 SOCKET_LIST.append(new_socket)
                 name = new_socket.recv(RECV_BUFFER).rstrip()
                 client_info[addr] = (name, 'home')
-                socket_info[new_socket] = (name, channel)
+                socket_info[new_socket] = (name, 'home')
                 channels['home'].append(new_socket)
                 print "%s has joined" % name
 
