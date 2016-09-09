@@ -66,6 +66,7 @@ def process_message(message, server_socket, client_socket):
             initiated.append(client_socket)
             print output
             socket_info[client_socket] = (output.rstrip(), 'home')
+            print socket_info[client_socket][0]
             return
         if output[0] == '/':
             command = output.rstrip().split()
@@ -79,6 +80,7 @@ def process_message(message, server_socket, client_socket):
             if client_channel == 'home':
                 single_client_message(utils.SERVER_CLIENT_NOT_IN_CHANNEL, client_socket)
             else:
+                print socket_info[client_socket][0]
                 channel_broadcast('[' + socket_info[client_socket][0] + '] ' + output, server_socket, client_socket)
 
 def single_client_message(message, client_socket):
@@ -117,7 +119,7 @@ def server():
                         SOCKET_LIST.remove(sock)
                         channels[client_channel].remove(sock)
                         channel_broadcast(utils.SERVER_CLIENT_LEFT_CHANNEL.format(socket_info[sock][0]), server_socket, sock)
-                        initiated.remove(socket)
+                        initiated.remove(sock)
                 except Exception, e:
 
                     traceback.print_exc()
