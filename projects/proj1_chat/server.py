@@ -15,6 +15,9 @@ client_info = {}
 RECV_BUFFER = 4096
 message_buffer = {}
 
+#mapping from socket to name
+socket_names = {}
+
 def join_channel(message, server_socket, client_socket):
     if len(message) < 2:
         single_client_message(utils.SERVER_JOIN_REQUIRES_ARGUMENT.format(message[1]), client_socket)
@@ -41,6 +44,8 @@ def create_channel(message, server_socket, client_socket):
         single_client_message(utils.SERVER_CHANNEL_EXISTS.format(message[1]), client_socket)
     else:
         client = client_info[client_socket.getpeername()]
+        if client[1] != 'home':
+            channel_broadcast(utils.SERVER_CLIENT_LEFT_CHANNEL.format(client[0]), server_socket, client_socket)
         channels[client[1]].remove(client_socket)
         channels[message[1]] = [client_socket]
         client_info[client_socket.getpeername()] = (client[0], message[1])
@@ -112,7 +117,7 @@ def server():
                 except Exception, e:
                     SOCKET_LIST.remove(sock)
                     channels[client_channel].remove(sock)
-                    channel_broadcast(utils.SERVER_CLIENT_LEFT_CHANNEL.format(client_info[sock.getpeername()][0]), server_socket, client_socket)
+                    channel_broadcast(utils.SERVER_CLIENT_LEFT_CHANNEL.format(socket_names[sock], server_socket, client_socket)
 
                     traceback.print_exc()
             # a new connection request recieved
@@ -121,6 +126,7 @@ def server():
                 SOCKET_LIST.append(new_socket)
                 name = new_socket.recv(RECV_BUFFER).rstrip()
                 client_info[addr] = (name, 'home')
+                socket_names[new_socket] = name
                 channels['home'].append(new_socket)
                 print "%s has joined" % name
 
