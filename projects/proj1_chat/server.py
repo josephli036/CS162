@@ -67,7 +67,11 @@ def process_message(message, server_socket, client_socket):
                 single_client_message(utils.SERVER_INVALID_CONTROL_MESSAGE.format(command[0]), client_socket)
                 traceback.print_exc()
         else:
-            channel_broadcast(output, server_socket, client_socket)
+            client_channel = client_info[client_socket.getpeername()][1]
+            if client_channel == 'home':
+                single_client_message(utils.SERVER_CLIENT_NOT_IN_CHANNEL, client_socket)
+            else:
+                channel_broadcast('[' + client_info[client_socket.getpeername()][0] + '] ' + output, server_socket, client_socket)
 
 def single_client_message(message, client_socket):
     message += '' * (200 - len(message))
@@ -76,13 +80,10 @@ def single_client_message(message, client_socket):
 def channel_broadcast(message, server_socket, client_socket):
     message = message.rstrip()
     client_channel = client_info[client_socket.getpeername()][1]
-    if client_channel == 'home':
-        single_client_message(utils.SERVER_CLIENT_NOT_IN_CHANNEL, client_socket)
     else:
         print message
         for s in SOCKET_LIST:
             if s != server_socket and s != client_socket and s in channels[client_channel]:
-                message = '[' + client_info[s.getpeername()][0] + '] ' + message
                 message += '' * (utils.MESSAGE_LENGTH - len(message))
                 s.send(message)
 
