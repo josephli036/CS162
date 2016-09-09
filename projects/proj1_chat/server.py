@@ -41,7 +41,7 @@ def create_channel(message, server_socket, client_socket):
     elif message[1] in channels:
         single_client_message(utils.SERVER_CHANNEL_EXISTS.format(message[1]), client_socket)
     else:
-        client = client_socket[client_socket]
+        client = socket_info[client_socket]
         if client[1] != 'home':
             channel_broadcast(utils.SERVER_CLIENT_LEFT_CHANNEL.format(client[0]), server_socket, client_socket)
         channels[client[1]].remove(client_socket)
