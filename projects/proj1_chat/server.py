@@ -22,11 +22,11 @@ def join_channel(message, server_socket, client_socket):
         single_client_message(utils.SERVER_JOIN_REQUIRES_ARGUMENT.format(message[1]), client_socket)
     else:
         client = client_info[s.getpeername()]
-        channel_broadcast(utils.SERVER_CLIENT_LEFT_CHANNEL.format(client[0]))
+        channel_broadcast(utils.SERVER_CLIENT_LEFT_CHANNEL.format(client[0]), server_socket, client_socket)
         channels[client[1]].remove(client_socket)
         channels[message[1]].append(client_socket)
         client_info[s.getpeername()] = (client[0], message[1])
-        channel_broadcast(utils.SERVER_CLIENT_JOINED_CHANNEL.format(client[0]))
+        channel_broadcast(utils.SERVER_CLIENT_JOINED_CHANNEL.format(client[0]), server_socket, client_socket)
 
 def list_channel(message, server_socket, client_socket):
     for channel in channels:
@@ -65,13 +65,13 @@ def process_message(message, server_socket, client_socket):
             except:
                 single_client_message(utils.SERVER_INVALID_CONTROL_MESSAGE.format(command[0]), client_socket)
         else:
-            channel_broadcast(output, client_socket)
+            channel_broadcast(output, server_socket, client_socket)
 
 def single_client_message(message, client_socket):
     message += '' * (200 - len(message))
     client_socket.send(message)
 
-def channel_broadcast(message, client_socket):
+def channel_broadcast(message, server_socket, client_socket):
     message = message.rstrip()
     client_channel = client_info[client_socket.getpeername()][1]
     if client_channel == 'main':
