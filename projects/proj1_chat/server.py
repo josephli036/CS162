@@ -56,10 +56,11 @@ def process_message(message, server_socket, client_socket):
         message_buffer[client_socket] = message
     if len(message_buffer[client_socket]) >= utils.MESSAGE_LENGTH:
         output = message_buffer[client_socket][:utils.MESSAGE_LENGTH]
-        if len(message_buffer[client_socket]) == utils.MESSAGE_LENGTH:
-            message_buffer.pop(client_socket)
-        else:
-            message_buffer[client_socket] = message_buffer[client_socket][utils.MESSAGE_LENGTH:]
+        message_buffer.pop(client_socket)
+        # if len(message_buffer[client_socket]) == utils.MESSAGE_LENGTH:
+            # message_buffer.pop(client_socket)
+        # else:
+        #     message_buffer[client_socket] = message_buffer[client_socket][utils.MESSAGE_LENGTH:]
         print output
         if output[0] == '/':
             command = output.rstrip().split()
