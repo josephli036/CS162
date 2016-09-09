@@ -99,8 +99,8 @@ def server():
         for sock in ready_to_read:
             # client message recieved
             if sock != server_socket:
-                client_channel = client_info[sock.getpeername()][1]
                 try:
+                    client_channel = client_info[sock.getpeername()][1]
                     message = sock.recv(RECV_BUFFER)
                     if message:
                         process_message(message, server_socket, sock)
