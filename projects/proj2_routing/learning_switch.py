@@ -62,12 +62,11 @@ class LearningSwitch(api.Entity):
 
         if isinstance(packet, basics.HostDiscoveryPacket):
             # Don't forward discovery messages
-			self.source()_mappings[packet.src] = port
-            return
+        	return
 
         # Flood out all ports except the input port
-		if packet.dst in self.source_mappings:
-			self.send(packet, self.source_mappings[packet.dst], flood=False)
-		else:
-        	self.send(packet, in_port, flood=True)
-		self.source_mappings[packet.src] = in_port
+	if packet.dst in self.source_mappings:
+		self.send(packet, self.source_mappings[packet.dst], flood=False)
+	else:
+		self.send(packet, in_port, flood=True)
+	self.source_mappings[packet.src] = in_port
