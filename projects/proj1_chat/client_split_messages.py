@@ -70,6 +70,8 @@ class ChatClientSplitMessages:
       self.send_split_message(client_socket, message)
       time.sleep(1)
 
+    self.send_split_message(client_socket, "/list")
+
 if __name__ == "__main__":
   if (len(sys.argv)) < 3:
     print "Usage: python client_split_messages.py server_hostname server_port"
