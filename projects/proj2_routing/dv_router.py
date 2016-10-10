@@ -129,6 +129,7 @@ class DVRouter(basics.DVRouterBase):
         have expired.
 
         """
+        self.log("sdfjklslkjghdskj (%s)", api.current_time())
         list_to_delete = []
         for entry in self.entry_time:
             if (api.current_time() - self.entry_time[entry]) >= self.ROUTE_TIMEOUT:
