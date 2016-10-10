@@ -69,7 +69,7 @@ class DVRouter(basics.DVRouterBase):
         if isinstance(packet, basics.RoutePacket):
             root = packet.destination.name
             r_latency = packet.latency
-            p_from = packet.src
+            p_from = packet.src.name
 
             if root == p_from:
                 self.port_dst_lookup[port] = [root]
