@@ -97,6 +97,7 @@ class DVRouter(basics.DVRouterBase):
                 self.dst_port_lookup[root] = port
                 self.dst_latency_lookup[root] = r_latency + self.link[port]
                 self.update_neighbors(root, port, r_latency + self.link[port])
+                self.entry_time[root] = api.current_time()
             else:
                 old_latency = self.dst_latency_lookup[root]
                 new_latency = self.dst_latency_lookup[p_from] + r_latency
