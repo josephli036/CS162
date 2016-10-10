@@ -102,9 +102,9 @@ class DVRouter(basics.DVRouterBase):
         else:
             # Totally wrong behavior for the sake of demonstration only: send
             # the packet back to where it came from!
-            self.send(packet, self.dst_port_lookup[packet.dst])
             print(packet.dst)
             print(self.dst_port_lookup[packet.dst])
+            self.send(packet, self.dst_port_lookup[packet.dst])
 
     def handle_timer(self):
         """
