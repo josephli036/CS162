@@ -136,5 +136,5 @@ class DVRouter(basics.DVRouterBase):
             self.delete_entry(item)
         for port in self.port_dst_lookup:
             for dst in self.dst_latency_lookup:
-                pack = basics.RoutePacket(dst, latency)
+                pack = basics.RoutePacket(dst, self.dst_latency_lookup[dst])
                 self.send(pack, port)
