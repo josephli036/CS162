@@ -48,8 +48,8 @@ class DVRouter(basics.DVRouterBase):
                     for dst in self.port_dst_lookup[port]:
                         pack = basics.RoutePacket(dst, INFINITY)
                         self.send(pack, neighbor)
-        self.dst_latency_lookup.pop(self.port_dst_lookup(port))
-        self.dst_port_lookup.pop(self.port_dst_lookup(port))
+        self.dst_latency_lookup.pop(self.port_dst_lookup[port])
+        self.dst_port_lookup.pop(self.port_dst_lookup[port])
         self.port_dst_lookup.pop(port)
 
 
