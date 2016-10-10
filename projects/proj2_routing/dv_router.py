@@ -32,7 +32,7 @@ class DVRouter(basics.DVRouterBase):
         in.
 
         """
-        pack = RoutePacket(self, latency)
+        pack = basics.RoutePacket(self, latency)
         self.send(pack, port)
 
     def handle_link_down(self, port):
@@ -42,11 +42,11 @@ class DVRouter(basics.DVRouterBase):
         The port number used by the link is passed in.
 
         """
-        if POISON_MODE:
+        if self.POISON_MODE:
             for neighbor in port_dst_lookup:
                 if neighbor != port:
                     for dst in port_dst_lookup[port]:
-                        pack = RoutePacket(dst, INFINITY)
+                        pack = basics.RoutePacket(dst, INFINITY)
                         send(pack, neighbor)
         dst_latency_lookup.pop(port_dst_lookup(port))
         dst_port_lookup.pop(port_dst_lookup(port))
