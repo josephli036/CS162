@@ -136,7 +136,7 @@ class DVRouter(basics.DVRouterBase):
         for item in list_to_delete:
             self.delete_entry(item)
         for port in self.port_dst_lookup:
-            if self.port_dst_lookup[port].isEmpty():
+            if not self.port_dst_lookup[port]:
                 self.port_dst_lookup.pop(port)
         for port in self.port_dst_lookup:
             for dst in self.dst_latency_lookup:
