@@ -109,7 +109,10 @@ class DVRouter(basics.DVRouterBase):
         elif isinstance(packet, basics.HostDiscoveryPacket):
             self.dst_port_lookup[packet.src] = port
             self.dst_latency_lookup[packet.src] = 0
-            #self.port_dst_lookup[port].append(packet.src)
+            if self.port_dst_lookup[port]:
+                self.port_dst_lookup[port].append(packet.src)
+            else:
+                self.port_dst_lookup[port] = [packet.src]
             self.update_neighbors(packet.src, port, 0)
             print(packet.src)
             print(packet.src.name)
