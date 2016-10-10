@@ -47,7 +47,7 @@ class DVRouter(basics.DVRouterBase):
                 if neighbor != port:
                     for dst in self.port_dst_lookup[port]:
                         pack = basics.RoutePacket(dst, INFINITY)
-                        send(pack, neighbor)
+                        self.send(pack, neighbor)
         self.dst_latency_lookup.pop(self.port_dst_lookup(port))
         self.dst_port_lookup.pop(self.port_dst_lookup(port))
         self.port_dst_lookup.pop(port)
@@ -94,7 +94,7 @@ class DVRouter(basics.DVRouterBase):
                 for neighbor in self.port_dst_lookup:
                     if neighbor != port:
                         pack = basics.RoutePacket(root, n_latency)
-                        send(pack, neighbor)
+                        self.send(pack, neighbor)
 
         elif isinstance(packet, basics.HostDiscoveryPacket):
             pass
