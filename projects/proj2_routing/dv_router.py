@@ -114,6 +114,7 @@ class DVRouter(basics.DVRouterBase):
             self.port_dst_lookup[port]+=[packet.src]
             self.update_neighbors(packet.src, port, self.link[port])
         else:
+            if packet.dst in self.dst_port_lookup and self.dst_port_lookup[packet.dst] != port
             self.send(packet, self.dst_port_lookup[packet.dst])
 
     def handle_timer(self):
