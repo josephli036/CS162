@@ -67,7 +67,7 @@ class DVRouter(basics.DVRouterBase):
         self.log("RX %s on %s (%s)", packet, port, api.current_time())
         changed = False
         if isinstance(packet, basics.RoutePacket):
-            root = packet.destination
+            root = packet.destination.name
             r_latency = packet.latency
             p_from = packet.src
 
