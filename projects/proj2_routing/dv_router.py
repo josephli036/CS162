@@ -64,9 +64,10 @@ class DVRouter(basics.DVRouterBase):
                     for dst in self.port_dst_lookup[port]:
                         pack = basics.RoutePacket(dst, INFINITY)
                         self.send(pack, neighbor)
-        for dst in self.port_dst_lookup[port]:
-            self.dst_latency_lookup.pop(dst)
-            self.dst_port_lookup.pop(dst)
+        for dst in self.dst_port_lookup:
+            if self.dst_port_lookup[dst] == port:
+                self.dst_latency_lookup.pop(dst)
+                self.dst_port_lookup.pop(dst)
 
 
     def handle_rx(self, packet, port):
@@ -97,7 +98,7 @@ class DVRouter(basics.DVRouterBase):
             else:
                 old_latency = self.dst_latency_lookup[root]
                 new_latency = self.dst_latency_lookup[p_from] + r_latency
-                if new_latency >= old_latency:
+                if new_latency <= old_latency:
                     self.dst_port_lookup[root] = port
                     self.dst_latency_lookup[root] = new_latency
                     self.entry_time[root] = api.current_time()
