@@ -100,7 +100,7 @@ class DVRouter(basics.DVRouterBase):
                 if new_latency >= old_latency:
                     self.port_dst_lookup[self.dst_port_lookup[root]].remove(root)
                     self.port_dst_lookup[port] += [root]
-                    self.dst_port_lookup[root] = port_dst_lookup
+                    self.dst_port_lookup[root] = port
                     self.dst_latency_lookup[root] = new_latency
                     self.entry_time[root] = api.current_time()
                     self.update_neighbors(root, port, new_latency)
@@ -130,7 +130,7 @@ class DVRouter(basics.DVRouterBase):
         """
         list_to_delete = []
         for entry in self.entry_time:
-            if api.current_time() - self.entry_time[entry]:
+            if (api.current_time() - self.entry_time[entry]) > self.ROUTE_TIMEOUT:
                 list_to_delete.append(entry)
         for item in list_to_delete:
             self.delete_entry(item)
