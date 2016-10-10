@@ -22,18 +22,17 @@ class DVRouter(basics.DVRouterBase):
         self.start_timer()  # Starts calling handle_timer() at correct rate
         self.dst_latency_lookup = {}
         self.dst_port_lookup = {}
-        self.port_dst_lookup = {}
+        self.links = []
         self.entry_time  = {}
 
     def delete_entry(self, entity):
         print "YOLOOOOOOO"
-        self.port_dst_lookup[self.dst_port_lookup[entity]].remove(entity)
         self.dst_port_lookup.pop(entity)
         self.dst_latency_lookup.pop(entity)
         self.entry_time.pop(entity)
 
     def update_neighbors(self, entity, port, latency):
-        for neighbor_port in self.port_dst_lookup:
+        for neighbor_port in self.links:
             if neighbor_port != port:
                 pack = basics.RoutePacket(entity, latency)
                 self.send(pack, neighbor_port)
@@ -46,6 +45,7 @@ class DVRouter(basics.DVRouterBase):
         in.
 
         """
+        links.append(port)
         pack = basics.RoutePacket(self, latency)
         self.send(pack, port)
 
@@ -57,8 +57,9 @@ class DVRouter(basics.DVRouterBase):
 
         """
         print("YOLOOOOOOOOO")
+        links.remove(port)
         if self.POISON_MODE:
-            for neighbor in self.port_dst_lookup:
+            for neighbor in self.links:
                 if neighbor != port:
                     for dst in self.port_dst_lookup[port]:
                         pack = basics.RoutePacket(dst, INFINITY)
@@ -66,7 +67,6 @@ class DVRouter(basics.DVRouterBase):
         for dst in self.port_dst_lookup[port]:
             self.dst_latency_lookup.pop(dst)
             self.dst_port_lookup.pop(dst)
-        self.port_dst_lookup.pop(port)
 
 
     def handle_rx(self, packet, port):
@@ -86,22 +86,18 @@ class DVRouter(basics.DVRouterBase):
             p_from = packet.src
 
             if root == p_from:
-                self.port_dst_lookup[port] = [root]
                 self.dst_port_lookup[root] = port
                 self.dst_latency_lookup[root] = r_latency
                 self.entry_time[root] = api.current_time()
                 self.update_neighbors(root, port, r_latency)
             elif root not in self.dst_port_lookup:
                 d_from_src = self.dst_latency_lookup[p_from]
-                self.port_dst_lookup[port] += [root]
                 self.dst_port_lookup[root] = port
                 self.dst_latency_lookup[root] = r_latency + d_from_src
             else:
                 old_latency = self.dst_latency_lookup[root]
                 new_latency = self.dst_latency_lookup[p_from] + r_latency
                 if new_latency >= old_latency:
-                    self.port_dst_lookup[self.dst_port_lookup[root]].remove(root)
-                    self.port_dst_lookup[port] += [root]
                     self.dst_port_lookup[root] = port
                     self.dst_latency_lookup[root] = new_latency
                     self.entry_time[root] = api.current_time()
@@ -109,10 +105,6 @@ class DVRouter(basics.DVRouterBase):
         elif isinstance(packet, basics.HostDiscoveryPacket):
             self.dst_port_lookup[packet.src] = port
             self.dst_latency_lookup[packet.src] = 0
-            if port in self.port_dst_lookup and self.port_dst_lookup[port]:
-                self.port_dst_lookup[port].append(packet.src)
-            else:
-                self.port_dst_lookup[port] = [packet.src]
             self.update_neighbors(packet.src, port, 0)
             print(packet.src)
             print(packet.src.name)
@@ -142,10 +134,10 @@ class DVRouter(basics.DVRouterBase):
                 list_to_delete.append(entry)
         for item in list_to_delete:
             self.delete_entry(item)
-        for port in self.port_dst_lookup:
+        for port in self.links:
             if not self.port_dst_lookup[port]:
                 self.port_dst_lookup.pop(port)
-        for port in self.port_dst_lookup:
+        for port in self.links:
             for dst in self.dst_latency_lookup:
                 pack = basics.RoutePacket(dst, self.dst_latency_lookup[dst])
                 self.send(pack, port)
