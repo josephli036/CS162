@@ -96,11 +96,11 @@ class DVRouter(basics.DVRouterBase):
                         self.send(pack, neighbor)
 
         elif isinstance(packet, basics.HostDiscoveryPacket):
-            self.port_dst_lookup[port] = packet.src
+            self.dst_port_lookup[packet.src] = port
         else:
             # Totally wrong behavior for the sake of demonstration only: send
             # the packet back to where it came from!
-            self.send(packet, port=port)
+            self.send(packet, self.dst_port_lookup[packet.dst])
 
     def handle_timer(self):
         """
