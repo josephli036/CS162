@@ -68,28 +68,26 @@ class DVRouter(basics.DVRouterBase):
         changed = False
         if isinstance(packet, basics.RoutePacket):
             root = packet.destination
-            if root == packet.src:
-                n_latency = packet.latency
-            else:
-                n_latency = packet.latency + self.dst_latency_lookup[packet.src]
-            if root not in self.dst_port_lookup:
-                changed = True
+            r_latency = packet.latency
+            p_from = packet.src
+
+            if root == p_from:
+                self.port_dst_lookup[port] = [root]
                 self.dst_port_lookup[root] = port
-                if port in self.port_dst_lookup:
-                    self.port_dst_lookup[port] += [root]
-                else:
-                    self.port_dst_lookup[port] = [root]
-                self.dst_latency_lookup[root] = n_latency
+                self.dst_latency_lookup[root] = r_latency
+            elif root not in dst_port_lookup:
+                d_from_src = self.dst_latency_lookup[p_from]
+                self.port_dst_lookup[port] += [root]
+                self.dst_port_lookup[root] = port
+                self.dst_port_lookup[root] = r_latency + d_from_src
             else:
-                o_latency = self.dst_latency_lookup[root]
-                if n_latency >= o_latency:
-                    changed = True
-                    self.dst_port_lookup[root] = port
-                    if port in self.port_dst_lookup:
-                        self.port_dst_lookup[port] += [root]
-                    else:
-                        self.port_dst_lookup[port] = [root]
-                self.dst_latency_lookup[root] = n_latency
+                old_latency = self.dst_latency_lookup[root]
+                new_latency = self.dst_latency_lookup[p_from] + r_latency
+                if new_latency >= old_latency:
+                    self.port_dst_lookup[self.dst_port_lookup[root]].remove(root)
+                    self.port_dst_lookup[port] += [root]
+                    self.dst_port_lookup[root] = port_dst_lookup
+                    self.dst_port_lookup[root] = new_latency
 
             if changed:
                 for neighbor in self.port_dst_lookup:
