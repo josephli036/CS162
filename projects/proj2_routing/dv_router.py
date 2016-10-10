@@ -80,7 +80,7 @@ class DVRouter(basics.DVRouterBase):
         You definitely want to fill this in.
 
         """
-        self.log("RX %s on %s %s (%s)", packet, port, self.name, api.current_time())
+        # self.log("RX %s on %s %s (%s)", packet, port, self.name, api.current_time())
         if isinstance(packet, basics.RoutePacket):
             root = packet.destination
             r_latency = packet.latency
@@ -114,7 +114,7 @@ class DVRouter(basics.DVRouterBase):
                 self.port_dst_lookup[port].append(packet.src)
             else:
                 self.port_dst_lookup[port] = [packet.src]
-            self.update_neighbors(packet.src, port, 0)
+            self.update_neighbors(packet.src, port, self.link[port])
         else:
             # Totally wrong behavior for the sake of demonstration only: send
             # the packet back to where it came from!
