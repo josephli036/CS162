@@ -132,8 +132,6 @@ class DVRouter(basics.DVRouterBase):
         list_to_delete = []
         for entry in self.entry_time:
             if (api.current_time() - self.entry_time[entry]) > self.ROUTE_TIMEOUT + 1:
-                self.log("sdfjklslkjghdskj (%s)", api.current_time())
-                self.log("sdfjklslkjghdskj (%s)", self.entry_time())
                 list_to_delete.append(entry)
         for item in list_to_delete:
             self.delete_entry(item)
