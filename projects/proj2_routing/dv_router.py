@@ -89,15 +89,14 @@ class DVRouter(basics.DVRouterBase):
             if root == p_from:
                 self.port_dst_lookup[port] += [root]
                 self.dst_port_lookup[root] = port
-                self.dst_latency_lookup[root] = r_latency
+                self.dst_latency_lookup[root] = r_latency + self.link[port]
                 self.entry_time[root] = api.current_time()
-                self.update_neighbors(root, port, r_latency)
+                self.update_neighbors(root, port, r_latency + self.link[port])
             elif root not in self.dst_port_lookup:
-                d_from_src = self.dst_latency_lookup[p_from]
                 self.port_dst_lookup[port] += [root]
                 self.dst_port_lookup[root] = port
-                self.dst_latency_lookup[root] = r_latency + d_from_src
-                self.update_neighbors(root, port, r_latency + d_from_src)
+                self.dst_latency_lookup[root] = r_latency + self.link[port]
+                self.update_neighbors(root, port, r_latency + self.link[port])
             else:
                 old_latency = self.dst_latency_lookup[root]
                 new_latency = self.dst_latency_lookup[p_from] + r_latency
