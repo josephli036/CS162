@@ -64,10 +64,13 @@ class DVRouter(basics.DVRouterBase):
                     for dst in self.port_dst_lookup[port]:
                         pack = basics.RoutePacket(dst, INFINITY)
                         self.send(pack, neighbor)
+        to_pop = []
         for dst in self.dst_port_lookup:
             if self.dst_port_lookup[dst] == port:
                 self.dst_latency_lookup.pop(dst)
-                self.dst_port_lookup.pop(dst)
+                to_pop.append(dst)
+        for i in to_pop:
+            self.dst_latency_lookup.pop(i)
 
 
     def handle_rx(self, packet, port):
@@ -130,8 +133,6 @@ class DVRouter(basics.DVRouterBase):
         list_to_delete = []
         for entry in self.entry_time:
             if (api.current_time() - self.entry_time[entry]) >= self.ROUTE_TIMEOUT:
-                self.log("sdfjklslkjghdskj (%s)", api.current_time())
-                self.log("sdfjklslkjghdskj (%s)", self.entry_time())
                 list_to_delete.append(entry)
         for item in list_to_delete:
             self.delete_entry(item)
