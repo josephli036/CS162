@@ -23,6 +23,14 @@ class DVRouter(basics.DVRouterBase):
         self.dst_latency_lookup = {}
         self.dst_port_lookup = {}
         self.port_dst_lookup = {}
+        self.entry_time  = {}
+
+    def delete_entry(self, entity):
+        self.port_dst_lookup[self.dst_port_lookup[entity]].remove(entity)
+        self.dst_port_lookup.pop(entity)
+        self.dst_latency_lookup.pop(entity)
+        self.entry_time.pop(entity)
+
 
     def handle_link_up(self, port, latency):
         """
@@ -67,14 +75,15 @@ class DVRouter(basics.DVRouterBase):
         self.log("RX %s on %s (%s)", packet, port, api.current_time())
         changed = False
         if isinstance(packet, basics.RoutePacket):
-            root = packet.destination.name
+            root = packet.destination
             r_latency = packet.latency
-            p_from = packet.src.name
+            p_from = packet.src
 
             if root == p_from:
                 self.port_dst_lookup[port] = [root]
                 self.dst_port_lookup[root] = port
                 self.dst_latency_lookup[root] = r_latency
+                self.entry_time[root] = api.current_time()
             elif root not in dst_port_lookup:
                 d_from_src = self.dst_latency_lookup[p_from]
                 self.port_dst_lookup[port] += [root]
@@ -86,8 +95,9 @@ class DVRouter(basics.DVRouterBase):
                 if new_latency >= old_latency:
                     self.port_dst_lookup[self.dst_port_lookup[root]].remove(root)
                     self.port_dst_lookup[port] += [root]
-                    self.dst_port_lookup[root] = port
-                    self.dst_latency_lookup[root] = new_latency
+                    self.dst_port_lookup[root] = port_dst_lookup
+                    self.dst_port_lookup[root] = new_latency
+                    self.entry_time[root] = api.current_time()
 
             if changed:
                 for neighbor in self.port_dst_lookup:
@@ -96,7 +106,7 @@ class DVRouter(basics.DVRouterBase):
                         self.send(pack, neighbor)
 
         elif isinstance(packet, basics.HostDiscoveryPacket):
-            self.dst_port_lookup[packet.src.name] = port
+            self.dst_port_lookup[packet.src] = port
             print(packet.src)
             print(packet.src.name)
             print(port)
@@ -104,8 +114,8 @@ class DVRouter(basics.DVRouterBase):
             # Totally wrong behavior for the sake of demonstration only: send
             # the packet back to where it came from!
             print(packet.dst)
-            print(self.dst_port_lookup[packet.dst.name])
-            self.send(packet, self.dst_port_lookup[packet.dst.name])
+            print(self.dst_port_lookup[packet.dst])
+            self.send(packet, self.dst_port_lookup[packet.dst])
 
     def handle_timer(self):
         """
@@ -116,4 +126,10 @@ class DVRouter(basics.DVRouterBase):
         have expired.
 
         """
-        pass
+        for entry in entry_time:
+            if api.current_time() - entry_time[entry]:
+                delete_entry(entry)
+        for port in self.port_dst_lookup:
+            for dst in dst_latency_lookup:
+                pack = basics.RoutePacket(dst, latency)
+                self.send(pack, port)
