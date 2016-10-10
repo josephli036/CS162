@@ -90,6 +90,7 @@ class DVRouter(basics.DVRouterBase):
             p_from = packet.src
 
             if root == p_from:
+                self.port_dst_lookup[self.dst_port_lookup[root]].remove(root)
                 self.port_dst_lookup[port] += [root]
                 self.dst_port_lookup[root] = port
                 self.dst_latency_lookup[root] = r_latency + self.link[port]
