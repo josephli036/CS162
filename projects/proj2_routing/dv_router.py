@@ -67,9 +67,8 @@ class DVRouter(basics.DVRouterBase):
         changed = False
         if isinstance(packet, basics.RoutePacket):
             root = packet.destination
-            o_latency = self.dst_latency_lookup[root]
             n_latency = packet.latency + self.dst_latency_lookup[packet.src]
-            if root not in self.dst_port_lookup or n_latency >= o_latency:
+            if root not in self.dst_port_lookup:
                 changed = True
                 self.dst_port_lookup[root] = port
                 if port in port_dst_lookup:
@@ -77,6 +76,17 @@ class DVRouter(basics.DVRouterBase):
                 else:
                     self.port_dst_lookup[port] = [root]
                 self.dst_latency_lookup[root] = n_latency
+            else:
+                o_latency = self.dst_latency_lookup[root]
+                if n_latency >= o_latency:
+                    changed = True
+                    self.dst_port_lookup[root] = port
+                    if port in port_dst_lookup:
+                        self.port_dst_lookup[port] += [root]
+                    else:
+                        self.port_dst_lookup[port] = [root]
+                self.dst_latency_lookup[root] = n_latency
+
             if changed:
                 for neighbor in self.port_dst_lookup:
                     if neighbor != port:
