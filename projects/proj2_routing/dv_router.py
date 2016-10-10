@@ -47,6 +47,7 @@ class DVRouter(basics.DVRouterBase):
 
         """
         self.link[port] = latency
+        self.port_dst_lookup[port] = []
         for dst in self.dst_latency_lookup:
             pack = basics.RoutePacket(dst, self.dst_latency_lookup[dst])
             self.send(pack, port)
@@ -86,7 +87,7 @@ class DVRouter(basics.DVRouterBase):
             p_from = packet.src
 
             if root == p_from:
-                self.port_dst_lookup[port] = [root]
+                self.port_dst_lookup[port] += [root]
                 self.dst_port_lookup[root] = port
                 self.dst_latency_lookup[root] = r_latency
                 self.entry_time[root] = api.current_time()
