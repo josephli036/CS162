@@ -64,7 +64,7 @@ class DVRouter(basics.DVRouterBase):
         You definitely want to fill this in.
 
         """
-        #self.log("RX %s on %s (%s)", packet, port, api.current_time())
+        self.log("RX %s on %s (%s)", packet, port, api.current_time())
         changed = False
         if isinstance(packet, basics.RoutePacket):
             root = packet.destination
@@ -96,7 +96,7 @@ class DVRouter(basics.DVRouterBase):
                         self.send(pack, neighbor)
 
         elif isinstance(packet, basics.HostDiscoveryPacket):
-            pass
+            self.port_dst_lookup[port] = packet.src
         else:
             # Totally wrong behavior for the sake of demonstration only: send
             # the packet back to where it came from!
