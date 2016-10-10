@@ -62,7 +62,10 @@ class DVRouter(basics.DVRouterBase):
 
         """
         self.link.pop(port)
+        print self.port_dst_lookup[port]
+
         for dst in self.port_dst_lookup[port]:
+            print elf.dst_port_lookup
             self.dst_port_lookup.pop(dst)
             self.dst_latency_lookup.pop(dst)
             self.entry_time.pop(dst)
