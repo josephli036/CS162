@@ -84,7 +84,7 @@ class DVRouter(basics.DVRouterBase):
                 if n_latency >= o_latency:
                     changed = True
                     self.dst_port_lookup[root] = port
-                    if port in port_dst_lookup:
+                    if port in self.port_dst_lookup:
                         self.port_dst_lookup[port] += [root]
                     else:
                         self.port_dst_lookup[port] = [root]
