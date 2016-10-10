@@ -100,7 +100,7 @@ class DVRouter(basics.DVRouterBase):
                 old_latency = self.dst_latency_lookup[root]
                 new_latency = self.dst_latency_lookup[p_from] + r_latency
                 if new_latency <= old_latency:
-                    self.port_dst_lookup[self.dst_port_lookup[root]].remove(root)
+                    if self.port_dst_lookup[self.dst_port_lookup[root]].remove(root):
                     self.port_dst_lookup[port] += [root]
                     self.dst_port_lookup[root] = port
                     self.dst_latency_lookup[root] = new_latency
@@ -109,19 +109,14 @@ class DVRouter(basics.DVRouterBase):
         elif isinstance(packet, basics.HostDiscoveryPacket):
             self.dst_port_lookup[packet.src] = port
             self.dst_latency_lookup[packet.src] = 0
-            if port in self.port_dst_lookup and self.port_dst_lookup[port]:
+            if port in self.port_dst_lookup:
                 self.port_dst_lookup[port].append(packet.src)
             else:
                 self.port_dst_lookup[port] = [packet.src]
             self.update_neighbors(packet.src, port, 0)
-            print(packet.src)
-            print(packet.src.name)
-            print(port)
         else:
             # Totally wrong behavior for the sake of demonstration only: send
             # the packet back to where it came from!
-            print(packet.dst)
-            print(self.dst_port_lookup[packet.dst])
             self.send(packet, self.dst_port_lookup[packet.dst])
 
     def handle_timer(self):
