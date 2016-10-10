@@ -86,8 +86,8 @@ class DVRouter(basics.DVRouterBase):
                 if new_latency >= old_latency:
                     self.port_dst_lookup[self.dst_port_lookup[root]].remove(root)
                     self.port_dst_lookup[port] += [root]
-                    self.dst_port_lookup[root] = port_dst_lookup
-                    self.dst_port_lookup[root] = new_latency
+                    self.dst_port_lookup[root] = port
+                    self.dst_latency_lookup[root] = new_latency
 
             if changed:
                 for neighbor in self.port_dst_lookup:
