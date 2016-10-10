@@ -24,10 +24,9 @@ class DVRouter(basics.DVRouterBase):
         self.dst_port_lookup = {}
         self.port_dst_lookup = {}
         self.entry_time  = {}
+        self.link = {}
 
     def delete_entry(self, entity):
-        self.log("sdfjklslkjghdskj (%s)", self.port_dst_lookup[self.dst_port_lookup[entity]])
-        self.log("sdfjklslkjghdskj (%s)", entity)
         self.port_dst_lookup[self.dst_port_lookup[entity]].remove(entity)
         self.dst_port_lookup.pop(entity)
         self.dst_latency_lookup.pop(entity)
@@ -47,7 +46,11 @@ class DVRouter(basics.DVRouterBase):
         in.
 
         """
-        pack = basics.RoutePacket(self, latency)
+        self.link[port] = latency
+        for dst in self.dst_latency_lookup:
+            pack = basics.RoutePacket(dst, self.dst_latency_lookup[dst])
+            self.send(pack, port)
+        pack = basics.RoutePacket(self, 0)
         self.send(pack, port)
 
     def handle_link_down(self, port):
@@ -57,17 +60,13 @@ class DVRouter(basics.DVRouterBase):
         The port number used by the link is passed in.
 
         """
-        print("YOLOOOOOOOOO")
-        if self.POISON_MODE:
-            for neighbor in self.port_dst_lookup:
-                if neighbor != port:
-                    for dst in self.port_dst_lookup[port]:
-                        pack = basics.RoutePacket(dst, INFINITY)
-                        self.send(pack, neighbor)
+        self.link.pop(port)
         for dst in self.port_dst_lookup[port]:
-            self.dst_latency_lookup.pop(dst)
             self.dst_port_lookup.pop(dst)
+            self.dst_latency_lookup.pop(dst)
+            self.entry_time.pop(dst)
         self.port_dst_lookup.pop(port)
+        
 
 
     def handle_rx(self, packet, port):
@@ -129,7 +128,6 @@ class DVRouter(basics.DVRouterBase):
         have expired.
 
         """
-        self.log("sdfjklslkjghdskj (%s)", api.current_time())
         list_to_delete = []
         for entry in self.entry_time:
             if (api.current_time() - self.entry_time[entry]) > self.ROUTE_TIMEOUT + 1:
@@ -140,4 +138,5 @@ class DVRouter(basics.DVRouterBase):
             for dst in self.dst_latency_lookup:
                 pack = basics.RoutePacket(dst, self.dst_latency_lookup[dst])
                 self.send(pack, port)
-            pack
+            pack = basics.RoutePacket(self, 0)
+            self.send(pack, port)
