@@ -127,9 +127,9 @@ class DVRouter(basics.DVRouterBase):
 
         """
         for entry in self.entry_time:
-            if api.current_time() - entry_time[entry]:
+            if api.current_time() - self.entry_time[entry]:
                 delete_entry(entry)
         for port in self.port_dst_lookup:
-            for dst in dst_latency_lookup:
+            for dst in self.dst_latency_lookup:
                 pack = basics.RoutePacket(dst, latency)
                 self.send(pack, port)
