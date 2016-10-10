@@ -98,6 +98,7 @@ class DVRouter(basics.DVRouterBase):
         elif isinstance(packet, basics.HostDiscoveryPacket):
             self.dst_port_lookup[packet.src] = port
             print(packet.src)
+            print(packet.src.name)
             print(port)
         else:
             # Totally wrong behavior for the sake of demonstration only: send
