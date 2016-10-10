@@ -31,6 +31,11 @@ class DVRouter(basics.DVRouterBase):
         self.dst_latency_lookup.pop(entity)
         self.entry_time.pop(entity)
 
+    def update_neighbors(self, entity, port, latency):
+        for neighbor_port in self.port_dst_lookup:
+            if neighbor_port != port:
+                pack = basics.RoutePacket(entity, latency)
+                self.send(pack, neighbor_port)
 
     def handle_link_up(self, port, latency):
         """
@@ -73,7 +78,6 @@ class DVRouter(basics.DVRouterBase):
 
         """
         self.log("RX %s on %s (%s)", packet, port, api.current_time())
-        changed = False
         if isinstance(packet, basics.RoutePacket):
             root = packet.destination
             r_latency = packet.latency
@@ -84,6 +88,7 @@ class DVRouter(basics.DVRouterBase):
                 self.dst_port_lookup[root] = port
                 self.dst_latency_lookup[root] = r_latency
                 self.entry_time[root] = api.current_time()
+                self.update_neighbors(root, port, r_latency)
             elif root not in dst_port_lookup:
                 d_from_src = self.dst_latency_lookup[p_from]
                 self.port_dst_lookup[port] += [root]
@@ -98,15 +103,12 @@ class DVRouter(basics.DVRouterBase):
                     self.dst_port_lookup[root] = port_dst_lookup
                     self.dst_port_lookup[root] = new_latency
                     self.entry_time[root] = api.current_time()
-
-            if changed:
-                for neighbor in self.port_dst_lookup:
-                    if neighbor != port:
-                        pack = basics.RoutePacket(root, n_latency)
-                        self.send(pack, neighbor)
-
+                    self.update_neighbors(root, port, new_latency)
         elif isinstance(packet, basics.HostDiscoveryPacket):
             self.dst_port_lookup[packet.src] = port
+            self.dst_latency_lookup[packet.src] = 0
+            self.port_dst_lookup[port].append(packet.src)
+            self.update_neighbors(packet.src, port, 0)
             print(packet.src)
             print(packet.src.name)
             print(port)
