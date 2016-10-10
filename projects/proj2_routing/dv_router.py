@@ -126,7 +126,7 @@ class DVRouter(basics.DVRouterBase):
         have expired.
 
         """
-        for entry in entry_time:
+        for entry in self.entry_time:
             if api.current_time() - entry_time[entry]:
                 delete_entry(entry)
         for port in self.port_dst_lookup:
