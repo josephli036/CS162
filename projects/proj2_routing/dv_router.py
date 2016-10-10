@@ -50,7 +50,7 @@ class DVRouter(basics.DVRouterBase):
                         self.send(pack, neighbor)
         for dst in self.port_dst_lookup[port]:
             self.dst_latency_lookup.pop(dst)
-        self.dst_port_lookup.pop(self.port_dst_lookup[port])
+            self.dst_port_lookup.pop(dst)
         self.port_dst_lookup.pop(port)
 
 
