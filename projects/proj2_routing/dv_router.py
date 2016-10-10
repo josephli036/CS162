@@ -131,7 +131,7 @@ class DVRouter(basics.DVRouterBase):
             if api.current_time() - self.entry_time[entry]:
                 list_to_delete.append(entry)
         for item in list_to_delete:
-            delete_entry(item)
+            self.delete_entry(item)
         for port in self.port_dst_lookup:
             for dst in self.dst_latency_lookup:
                 pack = basics.RoutePacket(dst, latency)
