@@ -43,14 +43,14 @@ class DVRouter(basics.DVRouterBase):
 
         """
         if self.POISON_MODE:
-            for neighbor in port_dst_lookup:
+            for neighbor in self.port_dst_lookup:
                 if neighbor != port:
-                    for dst in port_dst_lookup[port]:
+                    for dst in self.port_dst_lookup[port]:
                         pack = basics.RoutePacket(dst, INFINITY)
                         send(pack, neighbor)
-        dst_latency_lookup.pop(port_dst_lookup(port))
-        dst_port_lookup.pop(port_dst_lookup(port))
-        port_dst_lookup.pop(port)
+        self.dst_latency_lookup.pop(self.port_dst_lookup(port))
+        self.dst_port_lookup.pop(self.port_dst_lookup(port))
+        self.port_dst_lookup.pop(port)
 
 
     def handle_rx(self, packet, port):
@@ -67,20 +67,20 @@ class DVRouter(basics.DVRouterBase):
         changed = False
         if isinstance(packet, basics.RoutePacket):
             root = packet.destination
-            o_latency = dst_latency_lookup[root]
-            n_latency = packet.latency + dst_latency_lookup[packet.src]
-            if root not in dst_port_lookup or n_latency >= o_latency:
+            o_latency = self.dst_latency_lookup[root]
+            n_latency = packet.latency + self.dst_latency_lookup[packet.src]
+            if root not in self.dst_port_lookup or n_latency >= o_latency:
                 changed = True
-                dst_port_lookup[root] = port
+                self.dst_port_lookup[root] = port
                 if port in port_dst_lookup:
-                    port_dst_lookup[port] += [root]
+                    self.port_dst_lookup[port] += [root]
                 else:
-                    port_dst_lookup[port] = [root]
-                dst_latency_lookup[root] = n_latency
+                    self.port_dst_lookup[port] = [root]
+                self.dst_latency_lookup[root] = n_latency
             if changed:
-                for neighbor in port_dst_lookup:
+                for neighbor in self.port_dst_lookup:
                     if neighbor != port:
-                        pack = RoutePacket(root, n_latency)
+                        pack = basics.RoutePacket(root, n_latency)
                         send(pack, neighbor)
 
         elif isinstance(packet, basics.HostDiscoveryPacket):
