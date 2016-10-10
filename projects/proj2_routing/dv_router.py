@@ -97,10 +97,12 @@ class DVRouter(basics.DVRouterBase):
 
         elif isinstance(packet, basics.HostDiscoveryPacket):
             self.dst_port_lookup[packet.src] = port
+            self.log("(%s, %s)", packet.src, port, api.current_time())
         else:
             # Totally wrong behavior for the sake of demonstration only: send
             # the packet back to where it came from!
             self.send(packet, self.dst_port_lookup[packet.dst])
+            self.log("(%s, %s)", packet.dst, self.dst_port_lookup[packet.dst], api.current_time())
 
     def handle_timer(self):
         """
