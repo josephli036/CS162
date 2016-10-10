@@ -45,7 +45,7 @@ class DVRouter(basics.DVRouterBase):
         in.
 
         """
-        links.append(port)
+        self.links.append(port)
         pack = basics.RoutePacket(self, latency)
         self.send(pack, port)
 
@@ -57,7 +57,7 @@ class DVRouter(basics.DVRouterBase):
 
         """
         print("YOLOOOOOOOOO")
-        links.remove(port)
+        self.links.remove(port)
         if self.POISON_MODE:
             for neighbor in self.links:
                 if neighbor != port:
