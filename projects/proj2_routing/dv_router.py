@@ -96,7 +96,7 @@ class DVRouter(basics.DVRouterBase):
                         self.send(pack, neighbor)
 
         elif isinstance(packet, basics.HostDiscoveryPacket):
-            self.dst_port_lookup[packet.src] = port
+            self.dst_port_lookup[packet.src.name] = port
             print(packet.src)
             print(packet.src.name)
             print(port)
