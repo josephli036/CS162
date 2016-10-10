@@ -26,6 +26,7 @@ class DVRouter(basics.DVRouterBase):
         self.entry_time  = {}
 
     def delete_entry(self, entity):
+        print "YOLOOOOOOO"
         self.port_dst_lookup[self.dst_port_lookup[entity]].remove(entity)
         self.dst_port_lookup.pop(entity)
         self.dst_latency_lookup.pop(entity)
@@ -133,6 +134,8 @@ class DVRouter(basics.DVRouterBase):
         list_to_delete = []
         for entry in self.entry_time:
             if (api.current_time() - self.entry_time[entry]) >= self.ROUTE_TIMEOUT:
+                self.log("sdfjklslkjghdskj (%s)", api.current_time())
+                self.log("sdfjklslkjghdskj (%s)", self.entry_time())
                 list_to_delete.append(entry)
         for item in list_to_delete:
             self.delete_entry(item)
