@@ -20,6 +20,9 @@ class DVRouter(basics.DVRouterBase):
 
         """
         self.start_timer()  # Starts calling handle_timer() at correct rate
+        self.dst_latency_lookup = {}
+        self.dst_port_lookup = {}
+        self.port_dst_lookup = {}
 
     def handle_link_up(self, port, latency):
         """
@@ -29,7 +32,8 @@ class DVRouter(basics.DVRouterBase):
         in.
 
         """
-        pass
+        pack = RoutePacket(self, latency)
+        self.send(pack, port)
 
     def handle_link_down(self, port):
         """
@@ -38,7 +42,16 @@ class DVRouter(basics.DVRouterBase):
         The port number used by the link is passed in.
 
         """
-        pass
+        if POISON_MODE:
+            for neighbor in port_dst_lookup:
+                if neighbor != port:
+                    for dst in port_dst_lookup[port]
+                        pack = RoutePacket(dst, INFINITY)
+                        send(pack, neighbor)
+        dst_latency_lookup.pop(port_dst_lookup(port))
+        dst_port_lookup.pop(port_dst_lookup(port))
+        port_dst_lookup.pop(port)
+
 
     def handle_rx(self, packet, port):
         """
@@ -51,8 +64,25 @@ class DVRouter(basics.DVRouterBase):
 
         """
         #self.log("RX %s on %s (%s)", packet, port, api.current_time())
+        changed = False
         if isinstance(packet, basics.RoutePacket):
-            pass
+            root = packet.destination
+            o_latency = dst_latency_lookup[root]
+            n_latency = packet.latency + dst_latency_lookup[packet.src]
+            if root not in dst_port_lookup or n_latency >= o_latency:
+                changed = True
+                dst_port_lookup[root] = port
+                if port in port_dst_lookup:
+                    port_dst_lookup[port] += [root]
+                else:
+                    port_dst_lookup[port] = [root]
+                dst_latency_lookup[root] = n_latency
+            if changed:
+                for neighbor in port_dst_lookup:
+                    if neighbor != port:
+                        pack = RoutePacket(root, n_latency)
+                        send(pack, neighbor)
+
         elif isinstance(packet, basics.HostDiscoveryPacket):
             pass
         else:
