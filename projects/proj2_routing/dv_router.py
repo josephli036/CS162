@@ -28,7 +28,7 @@ class DVRouter(basics.DVRouterBase):
         self.link = {}
 
     def delete_entry(self, entity):
-        self.port_dst_lookup[self.dst_port_lookup[entity]].remove(entity)
+        self.port_dst_lookup[self.dst_port_lookup[entity[0]]].remove(entity[0])
         self.dst_port_lookup.pop(entity[0])
         self.dst_latency_lookup.pop(entity[0])
         self.entry_time.pop(entity)
@@ -108,7 +108,7 @@ class DVRouter(basics.DVRouterBase):
             for dst in self.port_dst_lookup[port]:
                 self.dst_port_lookup.pop(dst)
                 self.dst_latency_lookup.pop(dst)
-                self.entry_time.pop(dst)
+                self.entry_time.pop((dst, port, self.dst_latency_lookup[dst]))
             self.port_dst_lookup.pop(port)
         
 
