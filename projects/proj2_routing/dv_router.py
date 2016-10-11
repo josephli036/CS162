@@ -65,7 +65,8 @@ class DVRouter(basics.DVRouterBase):
     def add_route(self, packet, port):
 
         self.route_time[(packet.src, port, packet.latency)] = api.current_time()
-        self.route_ports[port].append((packet.src, port, packet.latency))
+        if (packet.src, port, packet.latency) not in self.route_ports[port]:
+            self.route_ports[port].append((packet.src, port, packet.latency))
         self.routes.append((packet.src, port, packet.latency))
         if packet.destination in self.route_destination:
             self.route_destination[packet.destination] += [(packet.src, port, packet.latency)]
