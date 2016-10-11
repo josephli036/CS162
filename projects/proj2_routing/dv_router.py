@@ -66,6 +66,9 @@ class DVRouter(basics.DVRouterBase):
             # self.log("I am %s deleting route %s (%s)", self.name, route, api.current_time())
             self.delete_route(route)
 
+        for dst in self.port_list_dst_lookup[port]:
+            self.update_state(dst)
+
     def update_neighbors(self, root, uport, latency):
         for neighbor_port in self.link:
             if neighbor_port != uport:
@@ -91,7 +94,6 @@ class DVRouter(basics.DVRouterBase):
             self.route_destination[route[0]].remove(route)
             self.route_ports[route[1]].remove(route)
             self.route_time.pop(route)
-            self.update_state(route[0])
 
     def update_state(self, root):
         changed = False
@@ -114,8 +116,10 @@ class DVRouter(basics.DVRouterBase):
         if changed:
             if root in self.dst_port_lookup:
                 self.port_list_dst_lookup[self.dst_port_lookup[root]].remove(root)
-
-            self.port_list_dst_lookup[best_port].append(root)
+            if best_port in self.port_list_dst_lookup:
+                self.port_list_dst_lookup[best_port].append(root)
+            else:
+                self.port_list_dst_lookup[best_port] = 
             self.dst_port_lookup[root] = best_port
             self.dst_latency_lookup[root] = shortest_latency
 
@@ -162,6 +166,7 @@ class DVRouter(basics.DVRouterBase):
             if (api.current_time() - self.route_time[route]) > self.ROUTE_TIMEOUT:
                 self.log("%s (%s)", api.current_time() - self.route_time[route], api.current_time())
                 self.delete_route(route)
+                self.update_state(route[0])
 
         for destination in self.dst_port_lookup:
             self.update_neighbors(destination, self.dst_port_lookup[destination], self.dst_latency_lookup[destination])
