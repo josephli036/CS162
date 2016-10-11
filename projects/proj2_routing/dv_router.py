@@ -99,11 +99,12 @@ class DVRouter(basics.DVRouterBase):
         You definitely want to fill this in.
 
         """
-        # self.log("RX %s on %s %s (%s)", packet, port, self.name, api.current_time())
+        self.log("RX %s on %s %s (%s)", packet, port, self.name, api.current_time())
         if isinstance(packet, basics.RoutePacket):
             root = packet.destination
             r_latency = packet.latency
             p_from = packet.src
+            
             if root == p_from:
                 self.update_local(root, port, r_latency + self.link[port])
                 self.update_neighbors(root, port, r_latency + self.link[port])
