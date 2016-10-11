@@ -54,6 +54,7 @@ class DVRouter(basics.DVRouterBase):
 
         """
         for route in self.route_ports[port]:
+            self.log("I am %s deleting route %s (%s)", self.name, route, api.current_time())
             self.delete_route(route)
 
     def update_neighbors(self, root, uport, latency):
@@ -128,7 +129,6 @@ class DVRouter(basics.DVRouterBase):
             self.add_route(packet, port)
             self.update_state(packet.destination)
         elif isinstance(packet, basics.HostDiscoveryPacket):
-            self.log("I am %s and i think the shorest path to %s is on port %s with latency %s (%s)", self.name, packet.src, port, self.link[port], api.current_time())
             self.dst_port_lookup[packet.src] = port
             self.dst_latency_lookup[packet.src] = self.link[port]
             self.port_list_dst_lookup[port] += [packet.src]
