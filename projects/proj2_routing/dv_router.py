@@ -139,4 +139,11 @@ class DVRouter(basics.DVRouterBase):
         have expired.
 
         """
+
+        for route in self.routes:
+            if api.current_time() - self.route_time[route] > self.ROUTE_TIMEOUT:
+                self.delete_route(route)
+
+        for destination in self.dst_port_lookup:
+            self.update_neighbors(destination, None, self.dst_port_lookup[destination])
         
