@@ -59,7 +59,6 @@ class DVRouter(basics.DVRouterBase):
             self.update_neighbors(dst, None, INFINITY)
             self.dst_port_lookup.pop(dst)
             self.dst_latency_lookup.pop(dst)
-        self.port_list_dst_lookup.pop(port)
 
         for route in self.route_ports[port]:
 
@@ -68,6 +67,8 @@ class DVRouter(basics.DVRouterBase):
 
         for dst in self.port_list_dst_lookup[port]:
             self.update_state(dst)
+
+        self.port_list_dst_lookup.pop(port)
 
     def update_neighbors(self, root, uport, latency):
         for neighbor_port in self.link:
@@ -106,8 +107,6 @@ class DVRouter(basics.DVRouterBase):
                 best_port = route[1]
 
         if best_port == None:
-            self.dst_port_lookup.pop(root)
-            self.dst_latency_lookup.pop(root)
             return
 
         if root not in self.dst_port_lookup or self.dst_port_lookup[root] != best_port or self.dst_latency_lookup[root] != shortest_latency:
