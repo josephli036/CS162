@@ -53,9 +53,9 @@ class DVRouter(basics.DVRouterBase):
 
     def update_local(self, root, port, latency):
         if root in self.routes:
-            self.routes[route] += [(root, port, latency)]
+            self.routes[root] += [(root, port, latency)]
         else:
-            self.routes[route] = [(root, port, latency)]
+            self.routes[root] = [(root, port, latency)]
             self.entry_time[(root, port, latency)] = api.current_time()
 
         best_port = None
