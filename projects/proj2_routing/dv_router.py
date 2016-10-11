@@ -83,9 +83,9 @@ class DVRouter(basics.DVRouterBase):
             self.route_ports[route[1]].remove(route)
             self.route_time.pop(route)
             for route in self.route_ports[route[1]]:
-                self.update_state(route[1])
+                self.update_state(route[0])
 
-    def update_state(self, port):
+    def update_state(self, root):
         changed = False
 
         best_port = None
