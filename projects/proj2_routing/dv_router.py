@@ -106,9 +106,13 @@ class DVRouter(basics.DVRouterBase):
             self.link.pop(port)
 
             for dst in self.port_dst_lookup[port]:
+                self.entry_time.pop((dst, port, self.dst_latency_lookup[dst]))
                 self.dst_port_lookup.pop(dst)
                 self.dst_latency_lookup.pop(dst)
-                self.entry_time.pop((dst, port, self.dst_latency_lookup[dst]))
+            for entity in self.routes:
+                for routes in self.routes[entity]:
+                    if routes[1] == port:
+                        self.routes[entity].pop(routes)
             self.port_dst_lookup.pop(port)
         
 
