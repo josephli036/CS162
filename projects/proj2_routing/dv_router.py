@@ -22,29 +22,10 @@ class DVRouter(basics.DVRouterBase):
         self.start_timer()  # Starts calling handle_timer() at correct rate
         self.dst_latency_lookup = {}
         self.dst_port_lookup = {}
-        self.port_dst_lookup = {}
-        self.entry_time  = {}
-        self.routes = {}
+        self.port_list_dst_lookup = {}
+        self.route_ports = {}
+        self.route_destination = {}
         self.link = {}
-
-    def delete_entry(self, entity):
-        self.port_dst_lookup[self.dst_port_lookup[entity]].remove(entity)
-        self.dst_port_lookup.pop(entity)
-        self.dst_latency_lookup.pop(entity)
-        self.entry_time.pop(entity)
-
-    def update_neighbors(self, entity, port, latency):
-        for neighbor_port in self.port_dst_lookup:
-            if neighbor_port != port:
-                pack = basics.RoutePacket(entity, latency)
-                self.send(pack, neighbor_port)
-
-    def update_local(self, root, port, latency):
-        if root not in self.port_dst_lookup[port]:
-            self.port_dst_lookup[port] += [root]
-        self.dst_port_lookup[root] = port
-        self.dst_latency_lookup[root] = latency
-        self.entry_time[root] = api.current_time()
 
     def handle_link_up(self, port, latency):
         """
@@ -55,7 +36,8 @@ class DVRouter(basics.DVRouterBase):
 
         """
         self.link[port] = latency
-        self.port_dst_lookup[port] = []
+        self.port_list_dst_lookup[port] = []
+        self.route_ports[port] = []
         for dst in self.dst_latency_lookup:
             pack = basics.RoutePacket(dst, self.dst_latency_lookup[dst])
             self.send(pack, port)
@@ -69,25 +51,50 @@ class DVRouter(basics.DVRouterBase):
         The port number used by the link is passed in.
 
         """
-        if self.POISON_MODE:
-            self.link.pop(port)
+        pass
 
-            for dst in self.port_dst_lookup[port]:
-                self.update_neighbors(dst, None, INFINITY)
-                self.dst_port_lookup.pop(dst)
-                self.dst_latency_lookup.pop(dst)
-                self.entry_time.pop(dst)
-            self.port_dst_lookup.pop(port)
+    def update_neightbors(self, root, uport, latency):
+        for neighbor_port in self.link:
+            if neighbor_port != uport:
+                pack = basics.RoutePacket(root, latency)
+                self.send(pack, neighbor_port)
+
+    def add_route(self, packet, port):
+
+        api.create_timer(self.ROUTE_TIMEOUT, self.delete_route, False, True, (packet.src, port, packet.latency))
+        self.route_ports[port] += [(packet.src, port, packet.latency)]
+        if packet.destination in self.route_destination:
+            self.route_destination[packet.destination] += [(packet.src, port, packet.latency)]
         else:
-            self.link.pop(port)
+            self.route_destination[packet.destination] = [(packet.src, port, packet.latency)]
 
-            for dst in self.port_dst_lookup[port]:
-                self.dst_port_lookup.pop(dst)
-                self.dst_latency_lookup.pop(dst)
-                self.entry_time.pop(dst)
-            self.port_dst_lookup.pop(port)
-        
+    def delete_route(self, route):
+        self.route_destination[route[0]].remove(route])
+        self.route_ports[route[1]].remove(route)
+        self.update_state(route[0])
 
+    def update_state(self, root):
+        changed = False
+
+        best_port = None
+        shortest_latency = INFINITY
+        for route in self.route_destination[root]:
+            if route[2] <= shortest_latency:
+                shortest_latency = route[2]
+                best_port = route[1]
+
+        if root not in self.dst_port_lookup or self.dst_port_lookup[root] != best_port:
+            changed = True
+
+        if root in self.dst_port_lookup:
+            self.port_list_dst_lookup[self.dst_port_lookup[root]].remove(root)
+
+        self.port_dst_lookup[best_port].append(root)
+        self.dst_port_lookup[root] = best_port
+        self.dst_latency_lookup[root] = shortest_latency
+
+        if changed:
+            self.update_neighbors(root, best_port, shortest_latency)
 
     def handle_rx(self, packet, port):
         """
@@ -101,26 +108,8 @@ class DVRouter(basics.DVRouterBase):
         """
         self.log("RX %s on %s %s (%s)", packet, port, self.name, api.current_time())
         if isinstance(packet, basics.RoutePacket):
-            root = packet.destination
-            r_latency = packet.latency
-            p_from = packet.src
-
-            if root == p_from:
-                self.update_local(root, port, r_latency + self.link[port])
-                self.update_neighbors(root, port, r_latency + self.link[port])
-            elif root not in self.dst_port_lookup:
-                self.update_local(root, port, r_latency + self.link[port])
-                self.update_neighbors(root, port, r_latency + self.link[port])
-            else:
-                old_latency = self.dst_latency_lookup[root]
-                new_latency = self.dst_latency_lookup[p_from] + r_latency
-                if self.dst_port_lookup[root] == port:
-                    self.update_local(root, port, new_latency)
-                    self.update_neighbors(root, port, new_latency)
-                elif new_latency <= old_latency:
-                    self.port_dst_lookup[self.dst_port_lookup[root]].remove(root)
-                    self.update_local(root, port, new_latency)
-                    self.update_neighbors(root, port, new_latency)
+            self.add_route(packet)
+            self.update_state(packet.destination)
         elif isinstance(packet, basics.HostDiscoveryPacket):
             self.dst_port_lookup[packet.src] = port
             self.dst_latency_lookup[packet.src] = self.link[port]
@@ -132,7 +121,6 @@ class DVRouter(basics.DVRouterBase):
                     return
                 else:
                     self.send(packet, self.dst_port_lookup[packet.dst])
-                # self.send(packet, self.dst_port_lookup[packet.dst])
 
     def handle_timer(self):
         """
@@ -143,17 +131,4 @@ class DVRouter(basics.DVRouterBase):
         have expired.
 
         """
-        list_to_delete = []
-        for entry in self.entry_time:
-            if (api.current_time() - self.entry_time[entry]) > self.ROUTE_TIMEOUT:
-                list_to_delete.append(entry)
-        for item in list_to_delete:
-            if self.POISON_MODE:
-                self.update_neighbors(item, None, INFINITY)
-            self.delete_entry(item)
-        for port in self.link:
-            for dst in self.dst_latency_lookup:
-                pack = basics.RoutePacket(dst, self.dst_latency_lookup[dst])
-                self.send(pack, port)
-            pack = basics.RoutePacket(self, 0)
-            self.send(pack, port)
+        
