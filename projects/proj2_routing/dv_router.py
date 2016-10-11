@@ -66,7 +66,7 @@ class DVRouter(basics.DVRouterBase):
 
             for dst in self.port_dst_lookup[port]:
                 for neighbor in self.link:
-                    self.update_neighbors(dst, neighbor, self.INFINITY)
+                    self.update_neighbors(dst, neighbor, INFINITY)
                 self.dst_port_lookup.pop(dst)
                 self.dst_latency_lookup.pop(dst)
                 self.entry_time.pop(dst)
@@ -147,7 +147,7 @@ class DVRouter(basics.DVRouterBase):
         for item in list_to_delete:
             if self.POISON_MODE:
                 for neighbor in self.link:
-                    self.update_neighbors(item, neighbor, self.INFINITY)
+                    self.update_neighbors(item, neighbor, INFINITY)
             self.delete_entry(item)
         for port in self.link:
             for dst in self.dst_latency_lookup:
