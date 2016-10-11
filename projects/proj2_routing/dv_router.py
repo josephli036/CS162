@@ -75,9 +75,9 @@ class DVRouter(basics.DVRouterBase):
             for dst in self.port_dst_lookup[port]:
                 for neighbor in self.link:
                     self.update_neighbors(dst, neighbor, INFINITY)
+                self.entry_time.pop((dst, port, self.dst_latency_lookup[dst]))
                 self.dst_port_lookup.pop(dst)
                 self.dst_latency_lookup.pop(dst)
-                self.entry_time.pop(dst)
             self.port_dst_lookup.pop(port)
         else:
             self.link.pop(port)
@@ -142,12 +142,12 @@ class DVRouter(basics.DVRouterBase):
         """
         list_to_delete = []
         for entry in self.entry_time:
-            if (api.current_time() - self.entry_time[entry]) > self.ROUTE_TIMEOUT:
+            if (api.current_time() - self.entry_time[entry][2]) > self.ROUTE_TIMEOUT:
                 list_to_delete.append(entry)
         for item in list_to_delete:
             if self.POISON_MODE:
                 for neighbor in self.link:
-                    self.update_neighbors(item, neighbor, INFINITY)
+                    self.update_neighbors(item[0], neighbor, INFINITY)
             self.delete_entry(item)
         for port in self.link:
             for dst in self.dst_latency_lookup:
