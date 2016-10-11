@@ -98,7 +98,7 @@ class DVRouter(basics.DVRouterBase):
             r_latency = packet.latency
             p_from = packet.src
             if r_latency >= self.INFINITY:
-                break;
+                return
             if root == p_from:
                 if root not in self.port_dst_lookup[port]:
                     self.port_dst_lookup[port] += [root]
