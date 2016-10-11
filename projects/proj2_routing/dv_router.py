@@ -119,11 +119,11 @@ class DVRouter(basics.DVRouterBase):
                 old_latency = self.dst_latency_lookup[root]
                 new_latency = self.dst_latency_lookup[p_from] + r_latency
                 if self.dst_port_lookup[root] == port:
-                    update_local(root, port, new_latency)
+                    self.update_local(root, port, new_latency)
                     self.update_neighbors(root, port, new_latency)
                 elif new_latency <= old_latency:
                     self.port_dst_lookup[self.dst_port_lookup[root]].remove(root)
-                    update_local(root, port, new_latency)
+                    self.update_local(root, port, new_latency)
                     self.update_neighbors(root, port, new_latency)
         elif isinstance(packet, basics.HostDiscoveryPacket):
             self.dst_port_lookup[packet.src] = port
