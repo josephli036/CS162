@@ -55,13 +55,13 @@ class DVRouter(basics.DVRouterBase):
         """
         self.link.pop(port)
 
-        for dst in self.port_dst_lookup[port]:
+        for dst in self.port_list_dst_lookup[port]:
             self.update_neighbors(dst, None, INFINITY)
             self.dst_port_lookup.pop(dst)
             self.dst_latency_lookup.pop(dst)
             self.entry_time.pop(dst)
-        self.port_dst_lookup.pop(port)
-        
+        self.port_list_dst_lookup.pop(port)
+
         for route in self.route_ports[port]:
 
             self.log("I am %s deleting route %s (%s)", self.name, route, api.current_time())
