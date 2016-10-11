@@ -124,8 +124,6 @@ class DVRouter(basics.DVRouterBase):
         """
         # self.log("RX %s on %s %s (%s)", packet, port, self.name, api.current_time())
         if isinstance(packet, basics.RoutePacket):
-            if packet.destination == self:
-                return
             self.add_route(packet, port)
             self.update_state(packet.destination)
         elif isinstance(packet, basics.HostDiscoveryPacket):
