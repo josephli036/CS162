@@ -148,8 +148,7 @@ class DVRouter(basics.DVRouterBase):
                 list_to_delete.append(entry)
         for item in list_to_delete:
             if self.POISON_MODE:
-                for neighbor in self.link:
-                    self.update_neighbors(item, neighbor, INFINITY)
+                self.update_neighbors(item, None, INFINITY)
             self.delete_entry(item)
         for port in self.link:
             for dst in self.dst_latency_lookup:
