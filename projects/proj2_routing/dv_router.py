@@ -119,7 +119,7 @@ class DVRouter(basics.DVRouterBase):
             if best_port in self.port_list_dst_lookup:
                 self.port_list_dst_lookup[best_port].append(root)
             else:
-                self.port_list_dst_lookup[best_port] = 
+                self.port_list_dst_lookup[best_port] = [root]
             self.dst_port_lookup[root] = best_port
             self.dst_latency_lookup[root] = shortest_latency
 
