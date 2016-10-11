@@ -44,7 +44,7 @@ class DVRouter(basics.DVRouterBase):
         self.dst_port_lookup[root] = port
         self.dst_latency_lookup[root] = latency
         self.update_neighbors(root, port, latency)
-        self.entry_time[root] = api.current_time()
+        self.entry_time[(root, port, latency)] = api.current_time()
 
     def handle_link_up(self, port, latency):
         """
@@ -126,7 +126,7 @@ class DVRouter(basics.DVRouterBase):
             self.update_neighbors(packet.src, port, self.link[port])
         else:
             if packet.dst in self.dst_port_lookup and self.dst_port_lookup[packet.dst] != port:
-                if self.dst_latency_lookup[packet.dst] >= INFINITY:
+                if self.dst_latency_lookup[packet.dst] > INFINITY:
                     return
                 else:
                     self.send(packet, self.dst_port_lookup[packet.dst])
