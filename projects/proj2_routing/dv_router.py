@@ -115,7 +115,7 @@ class DVRouter(basics.DVRouterBase):
                 self.dst_port_lookup.pop(dst)
                 self.dst_latency_lookup.pop(dst)
             for route in self.port_routes[port]:
-                self.routes[route[0]].pop(routes)
+                self.routes[route[0]].pop(route)
             self.port_routes.pop(port)
             self.port_dst_lookup.pop(port)
         
