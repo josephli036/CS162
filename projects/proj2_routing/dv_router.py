@@ -52,7 +52,7 @@ class DVRouter(basics.DVRouterBase):
                 self.send(pack, neighbor_port)
 
     def update_local(self, root, port, latency):
-        if route in self.routes:
+        if root in self.routes:
             self.routes[route] += [(root, port, latency)]
         else:
             self.routes[route] = [(root, port, latency)]
