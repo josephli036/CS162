@@ -104,6 +104,7 @@ class DVRouter(basics.DVRouterBase):
         self.dst_latency_lookup[root] = shortest_latency
 
         if changed:
+            self.log("I am %s and i think the shorest path to %s is on port %s with latency %s (%s)", self.name, root, best_port, shortest_latency, api.current_time())
             self.update_neighbors(root, best_port, shortest_latency)
 
     def handle_rx(self, packet, port):
@@ -116,7 +117,7 @@ class DVRouter(basics.DVRouterBase):
         You definitely want to fill this in.
 
         """
-        self.log("RX %s on %s %s (%s)", packet, port, self.name, api.current_time())
+        # self.log("RX %s on %s %s (%s)", packet, port, self.name, api.current_time())
         if isinstance(packet, basics.RoutePacket):
             self.add_route(packet, port)
             self.update_state(packet.destination)
