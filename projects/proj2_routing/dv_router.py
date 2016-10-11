@@ -69,10 +69,8 @@ class DVRouter(basics.DVRouterBase):
         for route in self.routes[root]:
             if route[2] <= shortest_latency:
                 best_port = route[1]
-        if best_port in self.port_dst_lookup:
+        if root not in self.port_dst_lookup[best_port]:
             self.port_dst_lookup[best_port] += [root]
-        else:
-            self.port_dst_lookup[best_port] = [root]
         self.dst_port_lookup[root] = best_port
         self.dst_latency_lookup[root] = shortest_latency
 
