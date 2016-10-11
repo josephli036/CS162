@@ -63,7 +63,7 @@ class DVRouter(basics.DVRouterBase):
 
         for route in self.route_ports[port]:
 
-            self.log("I am %s deleting route %s (%s)", self.name, route, api.current_time())
+            # self.log("I am %s deleting route %s (%s)", self.name, route, api.current_time())
             self.delete_route(route)
 
     def update_neighbors(self, root, uport, latency):
@@ -104,16 +104,24 @@ class DVRouter(basics.DVRouterBase):
                 best_port = route[1]
 
         if best_port == None:
+            self.dst_port_lookup.pop(root)
+            self.dst_latency_lookup.pop(root)
             return
 
+        if root not in self.dst_port_lookup or self.dst_port_lookup[root] != best_port or self.dst_latency_lookup[root] != shortest_latency:
+            changed = True
 
-        if root in self.dst_port_lookup:
-            self.port_list_dst_lookup[self.dst_port_lookup[root]].remove(root)
-        if root not in self.port_list_dst_lookup[best_port]:
+        if changed:
+            if root in self.dst_port_lookup:
+                self.port_list_dst_lookup[self.dst_port_lookup[root]].remove(root)
+
             self.port_list_dst_lookup[best_port].append(root)
-        self.dst_port_lookup[root] = best_port
-        self.dst_latency_lookup[root] = shortest_latency
-        self.update_neighbors(root, best_port, shortest_latency)
+            self.dst_port_lookup[root] = best_port
+            self.dst_latency_lookup[root] = shortest_latency
+
+        if changed:
+            self.log("I am %s and i think the shorest path to %s is on port %s with latency %s (%s)", self.name, root, best_port, shortest_latency, api.current_time())
+            self.update_neighbors(root, best_port, shortest_latency)
 
     def handle_rx(self, packet, port):
         """
