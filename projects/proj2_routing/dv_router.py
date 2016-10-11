@@ -25,6 +25,7 @@ class DVRouter(basics.DVRouterBase):
         self.port_list_dst_lookup = {}
         self.route_ports = {}
         self.route_destination = {}
+        self.route_time = {}
         self.routes = []
         self.link = {}
 
@@ -63,7 +64,7 @@ class DVRouter(basics.DVRouterBase):
 
     def add_route(self, packet, port):
 
-        api.create_timer(self.ROUTE_TIMEOUT, self.delete_route, False, True, ((packet.src, port, packet.latency)))
+        self.route_time[(packet.src, port, packet.latency)] = api.current_time()
         self.route_ports[port].append((packet.src, port, packet.latency))
         self.routes.append((packet.src, port, packet.latency))
         if packet.destination in self.route_destination:
@@ -76,6 +77,7 @@ class DVRouter(basics.DVRouterBase):
             self.routes.remove(route)
             self.route_destination[route[0]].remove(route)
             self.route_ports[route[1]].remove(route)
+            self.route_time.pop(route)
             self.update_state(route[0])
 
     def update_state(self, root):
