@@ -105,8 +105,6 @@ class DVRouter(basics.DVRouterBase):
             root = packet.destination
             r_latency = packet.latency
             p_from = packet.src
-            if r_latency >= INFINITY:
-                return
             if root == p_from:
                 if root not in self.port_dst_lookup[port]:
                     self.port_dst_lookup[port] += [root]
@@ -132,7 +130,9 @@ class DVRouter(basics.DVRouterBase):
             self.port_dst_lookup[port]+=[packet.src]
             self.update_neighbors(packet.src, port, self.link[port])
         else:
-            if packet.dst in self.dst_port_lookup and self.dst_port_lookup[packet.dst] != port:
+            if self.dst_latency_lookup[packet.dst] >= INFINITY:
+                return
+            elif packet.dst in self.dst_port_lookup and self.dst_port_lookup[packet.dst] != port:
                 self.send(packet, self.dst_port_lookup[packet.dst])
 
     def handle_timer(self):
