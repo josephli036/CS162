@@ -25,6 +25,7 @@ class DVRouter(basics.DVRouterBase):
         self.port_dst_lookup = {}
         self.entry_time  = {}
         self.routes = {}
+        self.port_routes = {}
         self.link = {}
 
     def delete_entry(self, entity):
@@ -33,6 +34,7 @@ class DVRouter(basics.DVRouterBase):
         self.dst_latency_lookup.pop(entity[0])
         self.entry_time.pop(entity)
         self.routes[entity[0]].remove(entity)
+        self.port_routes[entity[1]].remove(entity)
 
 
         best_port = None
@@ -56,7 +58,11 @@ class DVRouter(basics.DVRouterBase):
             self.routes[root] += [(root, port, latency)]
         else:
             self.routes[root] = [(root, port, latency)]
-            self.entry_time[(root, port, latency)] = api.current_time()
+        self.entry_time[(root, port, latency)] = api.current_time()
+        if port in self.port_routes:
+            self.port_routes[port] += [(root, port, latency)]
+        else:
+            self.port_routes[port] = [(root, port, latency)]
 
         best_port = None
         shortest_latency = INFINITY
@@ -106,13 +112,11 @@ class DVRouter(basics.DVRouterBase):
             self.link.pop(port)
 
             for dst in self.port_dst_lookup[port]:
-                self.entry_time.pop((dst, port, self.dst_latency_lookup[dst]))
                 self.dst_port_lookup.pop(dst)
                 self.dst_latency_lookup.pop(dst)
-            for entity in self.routes:
-                for routes in self.routes[entity]:
-                    if routes[1] == port:
-                        self.routes[entity].pop(routes)
+            for route in self.port_routes[port]:
+                self.routes[route[0]].pop(routes)
+            self.port_routes.pop(port)
             self.port_dst_lookup.pop(port)
         
 
