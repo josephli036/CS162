@@ -95,7 +95,7 @@ class DVRouter(basics.DVRouterBase):
 
         if best_port == None:
             return
-            
+
         if root not in self.dst_port_lookup or self.dst_port_lookup[root] != best_port or self.dst_latency_lookup[root] != shortest_latency:
             changed = True
 
@@ -127,6 +127,7 @@ class DVRouter(basics.DVRouterBase):
             self.add_route(packet, port)
             self.update_state(packet.destination)
         elif isinstance(packet, basics.HostDiscoveryPacket):
+            self.log("I am %s and i think the shorest path to %s is on port %s with latency %s (%s)", self.name, packet.src, port, self.link[port], api.current_time())
             self.dst_port_lookup[packet.src] = port
             self.dst_latency_lookup[packet.src] = self.link[port]
             self.port_list_dst_lookup[port] += [packet.src]
