@@ -44,7 +44,7 @@ class DVRouter(basics.DVRouterBase):
         self.dst_port_lookup[root] = port
         self.dst_latency_lookup[root] = latency
         self.update_neighbors(root, port, latency)
-        self.entry_time[(root, port, latency)] = api.current_time()
+        self.entry_time[root] = api.current_time()
 
     def handle_link_up(self, port, latency):
         """
@@ -75,9 +75,9 @@ class DVRouter(basics.DVRouterBase):
             for dst in self.port_dst_lookup[port]:
                 for neighbor in self.link:
                     self.update_neighbors(dst, neighbor, INFINITY)
-                self.entry_time.pop((dst, port, self.dst_latency_lookup[dst]))
                 self.dst_port_lookup.pop(dst)
                 self.dst_latency_lookup.pop(dst)
+                self.entry_time.pop(dst)
             self.port_dst_lookup.pop(port)
         else:
             self.link.pop(port)
@@ -106,7 +106,12 @@ class DVRouter(basics.DVRouterBase):
             r_latency = packet.latency
             p_from = packet.src
             if root == p_from:
-                self.update_local(root, port, self.link[port])
+                if root not in self.port_dst_lookup[port]:
+                    self.port_dst_lookup[port] += [root]
+                self.dst_port_lookup[root] = port
+                self.dst_latency_lookup[root] = r_latency + self.link[port]
+                self.entry_time[root] = api.current_time()
+                self.update_neighbors(root, port, r_latency + self.link[port])
             elif root not in self.dst_port_lookup:
                 self.update_local(root, port, r_latency)
             else:
@@ -125,8 +130,8 @@ class DVRouter(basics.DVRouterBase):
             self.port_dst_lookup[port]+=[packet.src]
             self.update_neighbors(packet.src, port, self.link[port])
         else:
-            if packet.dst in self.dst_port_lookup and self.dst_port_lookup[packet.dst] != port:
-                if self.dst_latency_lookup[packet.dst] > INFINITY:
+            elif packet.dst in self.dst_port_lookup and self.dst_port_lookup[packet.dst] != port:
+                if self.dst_latency_lookup[packet.dst] >= INFINITY:
                     return
                 else:
                     self.send(packet, self.dst_port_lookup[packet.dst])
@@ -147,7 +152,7 @@ class DVRouter(basics.DVRouterBase):
         for item in list_to_delete:
             if self.POISON_MODE:
                 for neighbor in self.link:
-                    self.update_neighbors(item[0], neighbor, INFINITY)
+                    self.update_neighbors(item, neighbor, INFINITY)
             self.delete_entry(item)
         for port in self.link:
             for dst in self.dst_latency_lookup:
