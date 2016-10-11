@@ -39,7 +39,8 @@ class DVRouter(basics.DVRouterBase):
                 self.send(pack, neighbor_port)
 
     def update_local(self, root, port, latency):
-        self.port_dst_lookup[port] += [root]
+        if root not in self.port_dst_lookup[port]:
+            self.port_dst_lookup[port] += [root]
         self.dst_port_lookup[root] = port
         self.dst_latency_lookup[root] = latency
         self.update_neighbors(root, port, latency)
