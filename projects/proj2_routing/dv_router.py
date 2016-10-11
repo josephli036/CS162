@@ -106,7 +106,6 @@ class DVRouter(basics.DVRouterBase):
         self.port_list_dst_lookup[best_port].append(root)
         self.dst_port_lookup[root] = best_port
         self.dst_latency_lookup[root] = shortest_latency
-        self.log("I am %s and i think the shorest path to %s is on port %s with latency %s (%s)", self.name, root, best_port, shortest_latency, api.current_time())
         self.update_neighbors(root, best_port, shortest_latency)
 
     def handle_rx(self, packet, port):
