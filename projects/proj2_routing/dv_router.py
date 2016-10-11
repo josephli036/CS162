@@ -102,8 +102,8 @@ class DVRouter(basics.DVRouterBase):
 
         if root in self.dst_port_lookup:
             self.port_list_dst_lookup[self.dst_port_lookup[root]].remove(root)
-
-        self.port_list_dst_lookup[best_port].append(root)
+        if root not in self.port_list_dst_lookup[best_port]:
+            self.port_list_dst_lookup[best_port].append(root)
         self.dst_port_lookup[root] = best_port
         self.dst_latency_lookup[root] = shortest_latency
         self.update_neighbors(root, best_port, shortest_latency)
