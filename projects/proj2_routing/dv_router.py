@@ -61,15 +61,24 @@ class DVRouter(basics.DVRouterBase):
         The port number used by the link is passed in.
 
         """
-        self.link.pop(port)
-        print self.port_dst_lookup[port]
+        if self.POISON_MODE:
+            self.link.pop(port)
 
-        for dst in self.port_dst_lookup[port]:
-            print self.dst_port_lookup
-            self.dst_port_lookup.pop(dst)
-            self.dst_latency_lookup.pop(dst)
-            self.entry_time.pop(dst)
-        self.port_dst_lookup.pop(port)
+            for dst in self.port_dst_lookup[port]:
+                for neighbor in self.link:
+                    self.update_neighbors(dst, neighbor, self.INFINITY)
+                self.dst_port_lookup.pop(dst)
+                self.dst_latency_lookup.pop(dst)
+                self.entry_time.pop(dst)
+            self.port_dst_lookup.pop(port)
+        else:
+            self.link.pop(port)
+
+            for dst in self.port_dst_lookup[port]:
+                self.dst_port_lookup.pop(dst)
+                self.dst_latency_lookup.pop(dst)
+                self.entry_time.pop(dst)
+            self.port_dst_lookup.pop(port)
         
 
 
@@ -88,7 +97,8 @@ class DVRouter(basics.DVRouterBase):
             root = packet.destination
             r_latency = packet.latency
             p_from = packet.src
-
+            if r_latency >= self.INFINITY:
+                break;
             if root == p_from:
                 if root not in self.port_dst_lookup[port]:
                     self.port_dst_lookup[port] += [root]
@@ -135,6 +145,9 @@ class DVRouter(basics.DVRouterBase):
             if (api.current_time() - self.entry_time[entry]) > self.ROUTE_TIMEOUT:
                 list_to_delete.append(entry)
         for item in list_to_delete:
+            if self.POISON_MODE:
+                for neighbor in self.link:
+                    self.update_neighbors(item, neighbor, self.INFINITY)
             self.delete_entry(item)
         for port in self.link:
             for dst in self.dst_latency_lookup:
