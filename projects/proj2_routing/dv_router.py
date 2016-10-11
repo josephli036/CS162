@@ -69,7 +69,7 @@ class DVRouter(basics.DVRouterBase):
             self.route_destination[packet.destination] = [(packet.src, port, packet.latency)]
 
     def delete_route(self, route):
-        self.route_destination[route[0]].remove(route])
+        self.route_destination[route[0]].remove(route)
         self.route_ports[route[1]].remove(route)
         self.update_state(route[0])
 
