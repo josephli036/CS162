@@ -156,6 +156,7 @@ class DVRouter(basics.DVRouterBase):
 
         for destination in self.dst_port_lookup:
             self.update_neighbors(destination, self.dst_port_lookup[destination], self.dst_latency_lookup[destination])
+        for port in self.link:
             pack = basics.RoutePacket(self, 0)
             self.send(pack, port)
         
