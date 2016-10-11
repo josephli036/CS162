@@ -53,7 +53,7 @@ class DVRouter(basics.DVRouterBase):
         """
         pass
 
-    def update_neightbors(self, root, uport, latency):
+    def update_neighbors(self, root, uport, latency):
         for neighbor_port in self.link:
             if neighbor_port != uport:
                 pack = basics.RoutePacket(root, latency)
