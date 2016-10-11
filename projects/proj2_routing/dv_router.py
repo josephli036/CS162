@@ -82,9 +82,10 @@ class DVRouter(basics.DVRouterBase):
             self.route_destination[route[0]].remove(route)
             self.route_ports[route[1]].remove(route)
             self.route_time.pop(route)
-            self.update_state(route[0])
+            for route in self.route_ports[route[1]]:
+                self.update_state(route[1])
 
-    def update_state(self, root):
+    def update_state(self, port):
         changed = False
 
         best_port = None
@@ -154,10 +155,9 @@ class DVRouter(basics.DVRouterBase):
                 self.log("%s (%s)", api.current_time() - self.route_time[route], api.current_time())
                 self.delete_route(route)
 
+        for destination in self.dst_port_lookup:
+            self.update_neighbors(destination, self.dst_port_lookup[destination], self.dst_latency_lookup[destination])
         for port in self.link:
-            for dst in self.dst_latency_lookup:
-                pack = basics.RoutePacket(dst, self.dst_latency_lookup[dst])
-                self.send(pack, port)
             pack = basics.RoutePacket(self, 0)
             self.send(pack, port)
         
