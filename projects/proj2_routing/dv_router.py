@@ -59,7 +59,6 @@ class DVRouter(basics.DVRouterBase):
             self.update_neighbors(dst, None, INFINITY)
             self.dst_port_lookup.pop(dst)
             self.dst_latency_lookup.pop(dst)
-            self.entry_time.pop(dst)
         self.port_list_dst_lookup.pop(port)
 
         for route in self.route_ports[port]:
