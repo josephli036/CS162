@@ -82,8 +82,7 @@ class DVRouter(basics.DVRouterBase):
             self.route_destination[route[0]].remove(route)
             self.route_ports[route[1]].remove(route)
             self.route_time.pop(route)
-            for route in self.route_ports[route[1]]:
-                self.update_state(route[0])
+            self.update_state(route[0])
 
     def update_state(self, root):
         changed = False
@@ -100,20 +99,15 @@ class DVRouter(basics.DVRouterBase):
             self.dst_latency_lookup.pop(root)
             return
 
-        if root not in self.dst_port_lookup or self.dst_port_lookup[root] != best_port or self.dst_latency_lookup[root] != shortest_latency:
-            changed = True
 
-        if changed:
-            if root in self.dst_port_lookup:
-                self.port_list_dst_lookup[self.dst_port_lookup[root]].remove(root)
+        if root in self.dst_port_lookup:
+            self.port_list_dst_lookup[self.dst_port_lookup[root]].remove(root)
 
-            self.port_list_dst_lookup[best_port].append(root)
-            self.dst_port_lookup[root] = best_port
-            self.dst_latency_lookup[root] = shortest_latency
-
-        if changed:
-            self.log("I am %s and i think the shorest path to %s is on port %s with latency %s (%s)", self.name, root, best_port, shortest_latency, api.current_time())
-            self.update_neighbors(root, best_port, shortest_latency)
+        self.port_list_dst_lookup[best_port].append(root)
+        self.dst_port_lookup[root] = best_port
+        self.dst_latency_lookup[root] = shortest_latency
+        self.log("I am %s and i think the shorest path to %s is on port %s with latency %s (%s)", self.name, root, best_port, shortest_latency, api.current_time())
+        self.update_neighbors(root, best_port, shortest_latency)
 
     def handle_rx(self, packet, port):
         """
@@ -151,7 +145,7 @@ class DVRouter(basics.DVRouterBase):
 
         """
         for route in self.routes:
-            if (api.current_time() - self.route_time[route]) >= self.ROUTE_TIMEOUT:
+            if (api.current_time() - self.route_time[route]) > self.ROUTE_TIMEOUT:
                 self.log("%s (%s)", api.current_time() - self.route_time[route], api.current_time())
                 self.delete_route(route)
 
