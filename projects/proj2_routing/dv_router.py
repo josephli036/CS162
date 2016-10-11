@@ -54,7 +54,7 @@ class DVRouter(basics.DVRouterBase):
 
         """
         for route in self.route_ports[port]:
-            self.delete_route()
+            self.delete_route(route)
 
     def update_neighbors(self, root, uport, latency):
         for neighbor_port in self.link:
