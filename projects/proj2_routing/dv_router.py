@@ -25,6 +25,7 @@ class DVRouter(basics.DVRouterBase):
         self.port_list_dst_lookup = {}
         self.route_ports = {}
         self.route_destination = {}
+        self.routes = []
         self.link = {}
 
     def handle_link_up(self, port, latency):
@@ -51,7 +52,8 @@ class DVRouter(basics.DVRouterBase):
         The port number used by the link is passed in.
 
         """
-        pass
+        for route in self.route_ports[port]:
+            self.delete_route()
 
     def update_neighbors(self, root, uport, latency):
         for neighbor_port in self.link:
@@ -62,16 +64,19 @@ class DVRouter(basics.DVRouterBase):
     def add_route(self, packet, port):
 
         api.create_timer(self.ROUTE_TIMEOUT, self.delete_route, False, True, (packet.src, port, packet.latency))
-        self.route_ports[port] += [(packet.src, port, packet.latency)]
+        self.route_ports[port].append((packet.src, port, packet.latency))
+        self.routes.append((packet.src, port, packet.latency))
         if packet.destination in self.route_destination:
             self.route_destination[packet.destination] += [(packet.src, port, packet.latency)]
         else:
             self.route_destination[packet.destination] = [(packet.src, port, packet.latency)]
 
     def delete_route(self, route):
-        self.route_destination[route[0]].remove(route)
-        self.route_ports[route[1]].remove(route)
-        self.update_state(route[0])
+        if route in self.routes:
+            self.routes.remove(route)
+            self.route_destination[route[0]].remove(route)
+            self.route_ports[route[1]].remove(route)
+            self.update_state(route[0])
 
     def update_state(self, root):
         changed = False
