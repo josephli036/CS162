@@ -72,8 +72,7 @@ class DVRouter(basics.DVRouterBase):
             self.link.pop(port)
 
             for dst in self.port_dst_lookup[port]:
-                for neighbor in self.link:
-                    self.update_neighbors(dst, neighbor, INFINITY)
+                self.update_neighbors(dst, None, INFINITY)
                 self.dst_port_lookup.pop(dst)
                 self.dst_latency_lookup.pop(dst)
                 self.entry_time.pop(dst)
