@@ -134,11 +134,11 @@ class DVRouter(basics.DVRouterBase):
             self.port_list_dst_lookup[port] += [packet.src]
             self.update_neighbors(packet.src, port, self.link[port])
         else:
-            # if packet.dst in self.dst_port_lookup and self.dst_port_lookup[packet.dst] != port and packet.dst != self:
-            #     if self.dst_latency_lookup[packet.dst] >= INFINITY:
-            #         return
-            #     else:
-            self.send(packet, self.dst_port_lookup[packet.dst])
+            if packet.dst in self.dst_port_lookup and self.dst_port_lookup[packet.dst] != port and packet.dst != self:
+                if self.dst_latency_lookup[packet.dst] >= INFINITY:
+                    return
+                else:
+                    self.send(packet, self.dst_port_lookup[packet.dst])
 
     def handle_timer(self):
         """
@@ -150,7 +150,7 @@ class DVRouter(basics.DVRouterBase):
 
         """
         for route in self.routes:
-            if (api.current_time() - self.route_time[route]) > self.ROUTE_TIMEOUT:
+            if (api.current_time() - self.route_time[route]) >= self.ROUTE_TIMEOUT:
                 self.log("%s (%s)", api.current_time() - self.route_time[route], api.current_time())
                 self.delete_route(route)
 
