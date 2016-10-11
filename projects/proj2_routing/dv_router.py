@@ -134,7 +134,7 @@ class DVRouter(basics.DVRouterBase):
                 self.update_neighbors(root, port, r_latency + self.link[port])
             else:
                 # old_latency = self.dst_latency_lookup[root]
-                # new_latency = self.dst_latency_lookup[p_from] + r_latency
+                new_latency = self.dst_latency_lookup[p_from] + r_latency
                 # if self.dst_port_lookup[root] == port:
                 #     self.update_local(root, port, new_latency)
                 #     self.update_neighbors(root, port, new_latency)
