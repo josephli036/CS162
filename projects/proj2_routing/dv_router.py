@@ -113,7 +113,7 @@ class DVRouter(basics.DVRouterBase):
         elif isinstance(packet, basics.HostDiscoveryPacket):
             self.dst_port_lookup[packet.src] = port
             self.dst_latency_lookup[packet.src] = self.link[port]
-            self.port_dst_lookup[port]+=[packet.src]
+            self.port_list_dst_lookup[port] += [packet.src]
             self.update_neighbors(packet.src, port, self.link[port])
         else:
             if packet.dst in self.dst_port_lookup and self.dst_port_lookup[packet.dst] != port:
