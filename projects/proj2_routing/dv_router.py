@@ -53,7 +53,17 @@ class DVRouter(basics.DVRouterBase):
         The port number used by the link is passed in.
 
         """
+        self.link.pop(port)
+
+        for dst in self.port_dst_lookup[port]:
+            self.update_neighbors(dst, None, INFINITY)
+            self.dst_port_lookup.pop(dst)
+            self.dst_latency_lookup.pop(dst)
+            self.entry_time.pop(dst)
+        self.port_dst_lookup.pop(port)
+        
         for route in self.route_ports[port]:
+
             self.log("I am %s deleting route %s (%s)", self.name, route, api.current_time())
             self.delete_route(route)
 
@@ -95,8 +105,6 @@ class DVRouter(basics.DVRouterBase):
                 best_port = route[1]
 
         if best_port == None:
-            self.dst_port_lookup.pop(root)
-            self.dst_latency_lookup.pop(root)
             return
 
 
