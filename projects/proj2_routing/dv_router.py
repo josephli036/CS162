@@ -38,6 +38,13 @@ class DVRouter(basics.DVRouterBase):
                 pack = basics.RoutePacket(entity, latency)
                 self.send(pack, neighbor_port)
 
+    def update_local(self, root, port, latency):
+        self.port_dst_lookup[port] += [root]
+        self.dst_port_lookup[root] = port
+        self.dst_latency_lookup[root] = latency
+        self.update_neighbors(root, port, latency)
+        self.entry_time[root] = api.current_time()
+
     def handle_link_up(self, port, latency):
         """
         Called by the framework when a link attached to this Entity goes up.
@@ -107,20 +114,16 @@ class DVRouter(basics.DVRouterBase):
                 self.entry_time[root] = api.current_time()
                 self.update_neighbors(root, port, r_latency + self.link[port])
             elif root not in self.dst_port_lookup:
-                self.port_dst_lookup[port] += [root]
-                self.dst_port_lookup[root] = port
-                self.dst_latency_lookup[root] = r_latency + self.link[port]
-                self.update_neighbors(root, port, r_latency + self.link[port])
-                self.entry_time[root] = api.current_time()
+                self.update_local(root, port, r_latency)
             else:
                 old_latency = self.dst_latency_lookup[root]
                 new_latency = self.dst_latency_lookup[p_from] + r_latency
-                if new_latency <= old_latency:
+                if self.dst_port_lookup[root] == port:
+                    update_local(root, port, new_latency)
+                    self.update_neighbors(root, port, new_latency)
+                elif new_latency <= old_latency:
                     self.port_dst_lookup[self.dst_port_lookup[root]].remove(root)
-                    self.port_dst_lookup[port] += [root]
-                    self.dst_port_lookup[root] = port
-                    self.dst_latency_lookup[root] = new_latency
-                    self.entry_time[root] = api.current_time()
+                    update_local(root, port, new_latency)
                     self.update_neighbors(root, port, new_latency)
         elif isinstance(packet, basics.HostDiscoveryPacket):
             self.dst_port_lookup[packet.src] = port
