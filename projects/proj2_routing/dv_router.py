@@ -131,10 +131,11 @@ class DVRouter(basics.DVRouterBase):
             self.update_neighbors(packet.src, port, self.link[port])
         else:
             if packet.dst in self.dst_port_lookup and self.dst_port_lookup[packet.dst] != port:
-                if self.dst_latency_lookup[packet.dst] >= INFINITY:
-                    return
-                else:
-                    self.send(packet, self.dst_port_lookup[packet.dst])
+                # if self.dst_latency_lookup[packet.dst] >= INFINITY:
+                #     return
+                # else:
+                #     self.send(packet, self.dst_port_lookup[packet.dst])
+                self.send(packet, self.dst_port_lookup[packet.dst])
 
     def handle_timer(self):
         """
