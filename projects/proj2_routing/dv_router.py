@@ -119,6 +119,8 @@ class DVRouter(basics.DVRouterBase):
         """
         # self.log("RX %s on %s %s (%s)", packet, port, self.name, api.current_time())
         if isinstance(packet, basics.RoutePacket):
+            if packet.destination == self:
+                return
             self.add_route(packet, port)
             self.update_state(packet.destination)
         elif isinstance(packet, basics.HostDiscoveryPacket):
@@ -143,10 +145,10 @@ class DVRouter(basics.DVRouterBase):
 
         """
 
+        for destination in self.dst_port_lookup:
+            self.update_neighbors(destination, None, self.dst_port_lookup[destination])
+
         for route in self.routes:
             if api.current_time() - self.route_time[route] > self.ROUTE_TIMEOUT:
                 self.delete_route(route)
-
-        for destination in self.dst_port_lookup:
-            self.update_neighbors(destination, None, self.dst_port_lookup[destination])
         
