@@ -93,7 +93,7 @@ class DVRouter(basics.DVRouterBase):
                 shortest_latency = route[2]
                 best_port = route[1]
 
-        if root not in self.dst_port_lookup or self.dst_port_lookup[root] != best_port:
+        if root not in self.dst_port_lookup or self.dst_port_lookup[root] != best_port or self.dst_latency_lookup[root] != shortest_latency:
             changed = True
 
         if root in self.dst_port_lookup:
