@@ -125,7 +125,7 @@ class DVRouter(basics.DVRouterBase):
             self.port_dst_lookup[port]+=[packet.src]
             self.update_neighbors(packet.src, port, self.link[port])
         else:
-            elif packet.dst in self.dst_port_lookup and self.dst_port_lookup[packet.dst] != port:
+            if packet.dst in self.dst_port_lookup and self.dst_port_lookup[packet.dst] != port:
                 if self.dst_latency_lookup[packet.dst] >= INFINITY:
                     return
                 else:
