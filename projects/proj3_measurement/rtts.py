@@ -16,15 +16,17 @@ def run_ping(hostnames, num_packets, raw_ping_output_filename, aggregated_ping_o
     raw_output = {}
     agg_output = {}
     for host in hostnames:
+        print host
         ping = subprocess.Popen(["ping", "-c", str(int(num_packets)+1), host], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, error = ping.communicate()
         if out:
             lost = int(re.findall(r".*(\d+)% packet loss", out)[0])
+            print lost
             split = out.split('\n')
             rtts = []
             seq = 0
             for i in split:
-                # print i
+                print i
                 if len(rtts) == num_packets:
                     continue
                 rtt = re.findall(r".*time=(\d+)", i)
