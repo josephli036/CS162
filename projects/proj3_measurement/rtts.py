@@ -45,7 +45,7 @@ def run_ping(hostnames, num_packets, raw_ping_output_filename, aggregated_ping_o
                         seq+=1
             raw_output[host] = rtts
             agg = {}
-            if lost == int(num_packets):
+            if lost == 100:
                 agg["drop_rate"] = 100.0
                 agg["max_rtt"] = -1.0
                 agg["median_rtt"] = -1.0
@@ -66,4 +66,4 @@ file = open('alexa_top_100')
 websites = []
 for website in file.readlines():
     websites.append(website.rstrip())
-run_ping(websites, '500', 'rtt_a_raw.json', 'rtt_a_agg.json')
+run_ping(websites, '1', 'rtt_a_raw.json', 'rtt_a_agg.json')
