@@ -58,4 +58,9 @@ def run_ping(hostnames, num_packets, raw_ping_output_filename, aggregated_ping_o
     with open(aggregated_ping_output_filename, 'w') as aggregated_file:
         json.dump(agg_output, aggregated_file)
 
-run_ping(['google.com'], '10', 'rtt_a_raw.json', 'rtt_a_agg.json')
+
+file = open('alexa_top_100')
+websites = []
+for website in file.readlines():
+    websites.append(website)
+run_ping(websites, '500', 'rtt_a_raw.json', 'rtt_a_agg.json')
