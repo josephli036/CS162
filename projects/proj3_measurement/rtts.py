@@ -48,7 +48,7 @@ def run_ping(hostnames, num_packets, raw_ping_output_filename, aggregated_ping_o
                 agg["median_rtt"] = -1.0
             else:
                 agg["drop_rate"] = 100 * float(lost)/float(num_packets)
-                agg["max_rtt"] = sorted(rtts)[len(rtts)]
+                agg["max_rtt"] = sorted(rtts)[len(rtts)-1]
                 agg["median_rtt"] = median(rtts[lost:])
             agg_output[host] = agg
         else:
