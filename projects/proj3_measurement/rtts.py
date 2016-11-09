@@ -22,6 +22,8 @@ def run_ping(hostnames, num_packets, raw_ping_output_filename, aggregated_ping_o
         if out:
             lost = int(re.findall(r".*(\d+)% packet loss.*", out)[0])
             print lost
+            print "what?"
+            print re.findall(r".*(\d+)% packet loss.*", out)
             split = out.split('\n')
             rtts = []
             seq = 0
