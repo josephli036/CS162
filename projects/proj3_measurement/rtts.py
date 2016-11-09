@@ -16,7 +16,7 @@ def run_ping(hostnames, num_packets, raw_ping_output_filename, aggregated_ping_o
     raw_output = {}
     agg_output = {}
     for host in hostnames:
-        ping = subprocess.Popen(["ping", "-c", num_packets, host], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        ping = subprocess.Popen(["ping", "-c", num_packets+1, host], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, error = ping.communicate()
         if out:
             lost = int(re.findall(r".*(\d+)% packet loss", out)[0])
@@ -25,6 +25,8 @@ def run_ping(hostnames, num_packets, raw_ping_output_filename, aggregated_ping_o
             seq = 0
             for i in split:
                 # print i
+                if len(rtts) == num_packets:
+                    continue
                 rtt = re.findall(r".*time=(\d+)", i)
                 new_seq = re.findall(r".*icmp_seq=(\d+)", i)
                 if new_seq:
@@ -41,7 +43,6 @@ def run_ping(hostnames, num_packets, raw_ping_output_filename, aggregated_ping_o
                         seq+=1
             raw_output[host] = rtts
             agg = {}
-            agg["drop_rate"] = 100 * float(lost)/float(num_packets)
             if lost == int(num_packets):
                 agg["drop_rate"] = 100.0
                 agg["max_rtt"] = -1.0
