@@ -20,7 +20,7 @@ def run_ping(hostnames, num_packets, raw_ping_output_filename, aggregated_ping_o
         ping = subprocess.Popen(["ping", "-c", str(int(num_packets)+1), host], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, error = ping.communicate()
         if out:
-            lost = int(re.findall(r".*(\d+)% packet loss", out)[0])
+            lost = int(re.findall(r".*(\d+)% packet loss.*", out)[0])
             print lost
             split = out.split('\n')
             rtts = []
