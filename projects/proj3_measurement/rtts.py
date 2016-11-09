@@ -31,13 +31,13 @@ def run_ping(hostnames, num_packets, raw_ping_output_filename, aggregated_ping_o
                     if new_seq-seq == 1:
                         # print float(rtt[0])
                         rtts.append(float(rtt[0]))
-                        seq++
+                        seq+=1
                     else:
                         while new_seq-seq != 1:
                             rtts.append(-1.0)
-                            seq++
+                            seq+=1
                         rtts.append(float(rtt[0]))
-                        seq++
+                        seq+=1
             raw_output[host] = rtts
             agg = {}
             agg["drop_rate"] = 100 * float(lost)/float(num_packets)
