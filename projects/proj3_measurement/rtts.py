@@ -64,4 +64,4 @@ file = open('alexa_top_100')
 websites = []
 for website in file.readlines():
     websites.append(website.rstrip())
-run_ping(websites, '500', 'rtt_a_raw.json', 'rtt_a_agg.json')
+run_ping(websites, '1', 'rtt_a_raw.json', 'rtt_a_agg.json')
