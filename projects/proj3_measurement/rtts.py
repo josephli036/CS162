@@ -26,8 +26,9 @@ def run_ping(hostnames, num_packets, raw_ping_output_filename, aggregated_ping_o
             for i in split:
                 # print i
                 rtt = re.findall(r".*time=(\d+)", i)
-                new_seq = int(re.findall(r".*icmp_seq=(\d+)", i)[0])
+                new_seq = re.findall(r".*icmp_seq=(\d+)", i)
                 if new_seq:
+                    new_seq = int(new_seq)
                     if new_seq-seq == 1:
                         # print float(rtt[0])
                         rtts.append(float(rtt[0]))
