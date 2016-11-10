@@ -22,14 +22,12 @@ def run_ping(hostnames, num_packets, raw_ping_output_filename, aggregated_ping_o
         if out:
             lost = int(re.findall(r".*, (\d+)% packet loss.*", out)[0])
             print lost
-            print "what?"
-            print re.findall(r".*(\d+)% packet loss.*", out)
             split = out.split('\n')
             rtts = []
             seq = 0
             for i in split:
                 print i
-                if len(rtts) == num_packets:
+                if len(rtts) == int(num_packets):
                     continue
                 rtt = re.findall(r".*time=(\d+)", i)
                 new_seq = re.findall(r".*icmp_seq=(\d+)", i)
@@ -43,8 +41,11 @@ def run_ping(hostnames, num_packets, raw_ping_output_filename, aggregated_ping_o
                         while new_seq-seq != 1:
                             rtts.append(-1.0)
                             seq+=1
-                        rtts.append(float(rtt[0]))
                         seq+=1
+                        if rtt:
+                            rtts.append(float(rtt[0]))
+                        else:
+                            rtts.append(-1.0)
             raw_output[host] = rtts
             agg = {}
             if lost == 100:
