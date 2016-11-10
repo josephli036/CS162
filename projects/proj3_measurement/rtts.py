@@ -17,35 +17,27 @@ def run_ping(hostnames, num_packets, raw_ping_output_filename, aggregated_ping_o
     agg_output = {}
     for host in hostnames:
         print host
-        ping = subprocess.Popen(["ping", "-c", str(int(num_packets)+1), host], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        ping = subprocess.Popen(["ping", "-c", num_packets, host], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, error = ping.communicate()
         if out:
             lost = int(re.findall(r".*, (\d+)% packet loss.*", out)[0])
             print lost
             split = out.split('\n')
             rtts = []
-            seq = 0
             for i in split:
                 print i
                 if len(rtts) == int(num_packets):
                     continue
                 rtt = re.findall(r".*time=(\d+)", i)
-                new_seq = re.findall(r".*icmp_seq=(\d+)", i)
-                if new_seq:
-                    new_seq = int(new_seq[0])
-                    if new_seq-seq == 1 and rtt:
-                        # print float(rtt[0])
+                seq = re.findall(r".*icmp_seq=(\d+)", i)
+                if seq:
+                    seq = int(seq[0])
+                    while len(rtts) < seq:
+                        rtts.append(-1.0)
+                    if rtt:
                         rtts.append(float(rtt[0]))
-                        seq+=1
                     else:
-                        while new_seq-seq != 1:
-                            rtts.append(-1.0)
-                            seq+=1
-                        seq+=1
-                        if rtt:
-                            rtts.append(float(rtt[0]))
-                        else:
-                            rtts.append(-1.0)
+                        rtts.append(-1.0)
             raw_output[host] = rtts
             agg = {}
             if lost == 100:
