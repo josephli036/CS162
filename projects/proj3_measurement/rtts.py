@@ -18,7 +18,7 @@ def run_ping(hostnames, num_packets, raw_ping_output_filename, aggregated_ping_o
     for host in hostnames:
         print host
         lost_count = 0
-        ping = subprocess.Popen(["ping", "-c", num_packets, host], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        ping = subprocess.Popen(["ping", "-c", str(num_packets), host], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, error = ping.communicate()
         if out:
             lost = float(re.findall(r".*, (\d+)% packet loss.*", out)[0])

@@ -3,11 +3,12 @@ import re
 import json
 
 def run_traceroute(hostnames, num_packets, output_filename):
+    file = open(output_filename, 'w')
     for host in hostnames:
         ping = subprocess.Popen(["traceroute", "-q", num_packets, host], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, error = ping.communicate()
         if out:
-            file = open(output_filename, 'w')
+            print out
             file.write(out)
         else:
             print 'No trace'
