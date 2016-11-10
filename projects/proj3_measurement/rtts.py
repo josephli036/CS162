@@ -20,7 +20,7 @@ def run_ping(hostnames, num_packets, raw_ping_output_filename, aggregated_ping_o
         ping = subprocess.Popen(["ping", "-c", num_packets, host], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, error = ping.communicate()
         if out:
-            lost = int(re.findall(r".*, (\d+)% packet loss.*", out)[0])
+            lost = float(re.findall(r".*, (\d+)% packet loss.*", out)[0])
             print lost
             split = out.split('\n')
             rtts = []
@@ -40,14 +40,14 @@ def run_ping(hostnames, num_packets, raw_ping_output_filename, aggregated_ping_o
                         rtts.append(-1.0)
             raw_output[host] = rtts
             agg = {}
-            if lost == 100:
+            if int(lost) == 100:
                 while len(rtts) != int(num_packets):
                     rtts.append(-1.0)
                 agg["drop_rate"] = 100.0
                 agg["max_rtt"] = -1.0
                 agg["median_rtt"] = -1.0
             else:
-                agg["drop_rate"] = 100 * float(lost)/float(num_packets)
+                agg["drop_rate"] = lost
                 agg["max_rtt"] = sorted(rtts)[len(rtts)-1]
                 agg["median_rtt"] = median(rtts[lost:])
             agg_output[host] = agg
@@ -63,4 +63,5 @@ file = open('alexa_top_100')
 websites = []
 for website in file.readlines():
     websites.append(website.rstrip())
-run_ping(websites, '5', 'rtt_a_raw.json', 'rtt_a_agg.json')
+run_ping(websites, '10', 'rtt_a_raw.json', 'rtt_a_agg.json')
+run_ping(websites, '100', 'rtt_b_raw.json', 'rtt_b_agg.json')
