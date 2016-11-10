@@ -32,7 +32,7 @@ def run_ping(hostnames, num_packets, raw_ping_output_filename, aggregated_ping_o
                 seq = re.findall(r".*icmp_seq=(\d+)", i)
                 if seq:
                     seq = int(seq[0])
-                    while len(rtts) < seq:
+                    while len(rtts) < seq-1:
                         rtts.append(-1.0)
                     if rtt:
                         rtts.append(float(rtt[0]))
@@ -41,6 +41,8 @@ def run_ping(hostnames, num_packets, raw_ping_output_filename, aggregated_ping_o
             raw_output[host] = rtts
             agg = {}
             if lost == 100:
+                while len(rtts) != num_packets:
+                    rtts.append(-1.0)
                 agg["drop_rate"] = 100.0
                 agg["max_rtt"] = -1.0
                 agg["median_rtt"] = -1.0
