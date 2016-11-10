@@ -29,8 +29,8 @@ def parse_traceroute(raw_traceroute_filename, output_filename):
                 result[hostname].append([{"name": "None", "ip": "None", "ASN": "None"}])
             else:
                 name = re.findall(r" (\S*) \(", line)
-                ip = re.findall(r"\((.*)\)", line)
-                asn = re.findall(r"\[(.*)\]", line)
+                ip = re.findall(r" \((.*)\) ", line)
+                asn = re.findall(r" \[(.*)\] ", line)
                 total = []
                 print name
                 print ip
