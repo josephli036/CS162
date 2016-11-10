@@ -53,7 +53,7 @@ def run_ping(hostnames, num_packets, raw_ping_output_filename, aggregated_ping_o
             else:
                 agg["drop_rate"] = lost
                 agg["max_rtt"] = sorted(rtts)[len(rtts)-1]
-                agg["median_rtt"] = median(rtts[lost:])
+                agg["median_rtt"] = median(rtts[lost_count:])
             agg_output[host] = agg
         else:
             print 'No ping'
