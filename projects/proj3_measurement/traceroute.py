@@ -19,7 +19,7 @@ def parse_traceroute(raw_traceroute_filename, output_filename):
     whole_output = whole_output.split("traceroute")[1:]
     for trace in whole_output:
         trace = trace.split('\n')
-        for line in trace[1::len(trace)-1]:
+        for line in trace[1:len(trace)-1]:
             print line
             name = re.findall(r"\d  (\S*)", line)[0]
             print name
