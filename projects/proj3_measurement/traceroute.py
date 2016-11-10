@@ -19,11 +19,8 @@ def parse_traceroute(raw_traceroute_filename, output_filename):
     whole_output = file.read()
     whole_output = whole_output.split("traceroute")[1:]
     for trace in whole_output:
+        hostname = re.findall(r".* (\S*) \(", trace)[0]
         trace = trace.split('\n')
-        hostname = re.findall(r".* (\S*) \(", trace)
-        print trace
-        print hostname
-        hostname = hostname[0]
         result[hostname] = []
         for line in trace[1:len(trace)-1]:
             print line
