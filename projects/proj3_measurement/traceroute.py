@@ -22,7 +22,12 @@ def parse_traceroute(raw_traceroute_filename, output_filename):
         for line in trace[1:len(trace)-1]:
             print line
             name = re.findall(r"\d  (\S*)", line)[0]
-            print name
+            if name == "*":
+                name = "None"
+                ip = "None"
+            else:
+                ip = re.findall(r"\((.*)\)", line)
+                print ip
 
 file = open('alexa_top_100')
 websites = []
