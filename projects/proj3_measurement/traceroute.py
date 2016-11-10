@@ -32,7 +32,7 @@ def parse_traceroute(raw_traceroute_filename, output_filename):
                 ip = re.findall(r"\((.*)\)", line)
                 asn = re.findall(r"\[(.*)\]", line)
                 total = []
-                for i in range(0, len(name)-1):
+                for i in range(0, len(name)):
                     temp = {"name": name[i], "ip": ip[i]}
                     if asn[i] == "*":
                         temp["ASN"] = "None"
