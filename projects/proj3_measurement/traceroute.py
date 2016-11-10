@@ -5,7 +5,7 @@ import json
 def run_traceroute(hostnames, num_packets, output_filename):
     file = open(output_filename, 'w')
     for host in hostnames:
-        ping = subprocess.Popen(["traceroute", "-q", num_packets, host], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        ping = subprocess.Popen(["traceroute", "-A", "-q", num_packets, host], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, error = ping.communicate()
         if out:
             print out
@@ -18,7 +18,12 @@ def parse_traceroute(raw_traceroute_filename, output_filename):
     whole_output = file.read()
     whole_output = whole_output.split("traceroute")[1:]
     for trace in whole_output:
-        print [trace]
+        trace = trace.split('\n')
+        for line in trace[1:]:
+            print line
+            name = re.findall(r".* .*", i)[0]
+            print name
+
 
 
 
