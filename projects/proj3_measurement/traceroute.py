@@ -41,6 +41,10 @@ def parse_traceroute(raw_traceroute_filename, output_filename):
                         temp["ASN"] = "None"
                     else:
                         temp["ASN"] = asn[i]
+                    total.append(temp)
+                result[hostname].append(total)
+    with open(output_filename, 'w') as output:
+        json.dump(result, output)
 
                 
 
