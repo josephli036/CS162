@@ -17,7 +17,7 @@ def parse_traceroute(raw_traceroute_filename, output_filename):
     file = open(raw_traceroute_filename)
     whole_output = file.read()
     whole_output = whole_output.split("traceroute")[1:]
-    for trace in whole_output:
+    for trace in whole_output[:len(whole_output)-1]:
         trace = trace.split('\n')
         for line in trace[1:]:
             print line
