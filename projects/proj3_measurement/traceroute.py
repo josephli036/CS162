@@ -29,5 +29,5 @@ websites = []
 trace_a_websites = ["google.com", "facebook.com", "www.berkeley.edu", "allspice.lcs.mit.edu", "todayhumor.co.kr", "www.city.kobe.lg.jp", "www.vutbr.cz", "zanvarsity.ac.tz"]
 for website in file.readlines():
     websites.append(website.rstrip())
-run_traceroute(trace_a_websites, "5", 'traceoutput')
+#run_traceroute(trace_a_websites, "5", 'traceoutput')
 parse_traceroute("traceoutput", "tr_a.json")
