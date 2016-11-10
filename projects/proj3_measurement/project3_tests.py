@@ -179,5 +179,5 @@ def main():
         check_file(dns_check, args.dns)
 
 if __name__ == "__main__":
-    rtt_part_a_check('rtt_a_agg.json'):
-    rtt_part_b_check('rtt_b_agg.json'):
+    rtt_part_a_check('rtt_a_agg.json')
+    rtt_part_b_check('rtt_b_agg.json')
