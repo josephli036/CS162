@@ -17,6 +17,7 @@ def run_ping(hostnames, num_packets, raw_ping_output_filename, aggregated_ping_o
     agg_output = {}
     for host in hostnames:
         print host
+        lost_count = 0
         ping = subprocess.Popen(["ping", "-c", num_packets, host], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, error = ping.communicate()
         if out:
@@ -34,14 +35,17 @@ def run_ping(hostnames, num_packets, raw_ping_output_filename, aggregated_ping_o
                     seq = int(seq[0])
                     while len(rtts) < seq-1:
                         rtts.append(-1.0)
+                        lost_count += 1
                     if rtt:
                         rtts.append(float(rtt[0]))
                     else:
+                        lost_count += 1
                         rtts.append(-1.0)
             raw_output[host] = rtts
             agg = {}
             if int(lost) == 100:
                 while len(rtts) != int(num_packets):
+                    lost_count += 1
                     rtts.append(-1.0)
                 agg["drop_rate"] = 100.0
                 agg["max_rtt"] = -1.0
