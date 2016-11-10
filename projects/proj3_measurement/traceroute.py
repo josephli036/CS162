@@ -21,11 +21,8 @@ def parse_traceroute(raw_traceroute_filename, output_filename):
         trace = trace.split('\n')
         for line in trace[1:]:
             print line
-            name = re.findall(r".* .*", i)[0]
+            name = re.findall(r".* .*", line)[0]
             print name
-
-
-
 
 file = open('alexa_top_100')
 websites = []
