@@ -40,7 +40,7 @@ def run_ping(hostnames, num_packets, raw_ping_output_filename, aggregated_ping_o
                         rtts.append(-1.0)
             raw_output[host] = rtts
             agg = {}
-            if int(lost) == 100:
+            if lost_count == num_packets:
                 while len(rtts) != num_packets:
                     lost_count += 1
                     rtts.append(-1.0)
