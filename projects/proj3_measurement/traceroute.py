@@ -1,7 +1,7 @@
 import subprocess
 import re
 import json
-import os
+import time
 
 def run_traceroute(hostnames, num_packets, output_filename):
     file = open(output_filename, 'w')
@@ -44,17 +44,24 @@ def parse_traceroute(raw_traceroute_filename, output_filename):
                         temp["ASN"] = asn[i]
                     total.append(temp)
                 result[hostname].append(total)
-    with open(output_filename, 'a') as output:
-        if os.stat(output_filename).st_size != 0:
-            output.write('\n')
+    with open(output_filename, "w") as output:
         json.dump(result, output)
-
                 
 
 file = open('alexa_top_100')
+run_output = "tr_a_trial.json"
 websites = []
 trace_a_websites = ["google.com", "facebook.com", "www.berkeley.edu", "allspice.lcs.mit.edu", "todayhumor.co.kr", "www.city.kobe.lg.jp", "www.vutbr.cz", "zanvarsity.ac.tz"]
 for website in file.readlines():
     websites.append(website.rstrip())
-#run_traceroute(trace_a_websites, "5", 'traceoutput')
-parse_traceroute("traceoutput", "tr_a.json")
+timestamp = str(time.time())
+run_traceroute(trace_a_websites, "5", 'traceoutput')
+parse_traceroute("traceoutput", run_output)
+with open("tr_a.json", "a") as output:
+    with open(run_output, "rw") as single_output:
+        dictionary = json.load(single_output)
+        dictionary["timestamp"] = timestamp
+        json.dump(dictionary, single_output)
+        json_output = single_output.read()
+        output.append(json_output)
+
