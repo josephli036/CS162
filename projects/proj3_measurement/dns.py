@@ -34,7 +34,6 @@ def parse_no_dns(out, host_dictionary):
         lines = query.split('\n')
         if lines[1][0] == ';' and lines[0] == '':
             lines = lines[3:]
-        print lines
         result = lines[len(lines)-1]
         time = int(re.findall(r" (\d+) ms$", result)[0])
         lines = lines[:len(lines)-1]
@@ -44,10 +43,6 @@ def parse_no_dns(out, host_dictionary):
             TTL = int(temp[1])
             d_type = temp[3]
             data = temp[4]
-            print queried_name
-            print TTL
-            print d_type
-            print data
             if d_type == "A" or d_type == "CNAME":
                 success = True
             awnsers.append({utils.QUERIED_NAME_KEY: queried_name, utils.ANSWER_DATA_KEY: data, utils.TYPE_KEY: d_type, utils.TTL_KEY: TTL})
