@@ -1,6 +1,8 @@
 import subprocess
 import re
 import json
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 def median(lst):
@@ -11,6 +13,21 @@ def median(lst):
             return lst[((len(lst)+1)/2)-1]
     else:
             return float(sum(lst[(len(lst)/2)-1:(len(lst)/2)+1]))/2.0
+
+def plot_median_rtt_cdf(agg_ping_results_filename, output_cdf_filename):
+    with open(agg_ping_results_filename, "r") as in_file:
+        data_dict = json.load(in_file)
+    result = []
+    for key in data_dict:
+        median = data_dict[key]["median_rtt"]
+        if media != -1.0:
+            result.append(median)
+
+    result = np.sort(result)
+    y = np.arange(len(result))/float(len(result)-1)
+    plt.plot(result, y)
+    plt.savefig("rtt_a_media.png", bbox_inches='tight')
+
 
 def run_ping(hostnames, num_packets, raw_ping_output_filename, aggregated_ping_output_filename):
     raw_output = {}
