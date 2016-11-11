@@ -6,8 +6,8 @@ import time
 def run_traceroute(hostnames, num_packets, output_filename):
     file = open(output_filename, 'w')
     for host in hostnames:
-        ping = subprocess.Popen(["traceroute", "-A", "-q", num_packets, host], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out, error = ping.communicate()
+        traceroute_run = subprocess.Popen(["traceroute", "-A", "-q", num_packets, host], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, error = traceroute_run.communicate()
         if out:
             # print out
             file.write(out)
@@ -58,12 +58,14 @@ timestamp = str(time.time())
 run_traceroute(trace_a_websites, "5", 'traceoutput')
 parse_traceroute("traceoutput", run_output)
 with open("tr_a.json", "w") as output:
-    with open(run_output, "r") as single_output:
-        dictionary = json.load(single_output)
-        dictionary["timestamp"] = timestamp
-        single_output.close()
-    with open(run_output, "w") as single_output:
-        json.dump(dictionary, single_output)
-        json_output = single_output.read()
-        output.append(json_output)
+    single_output = open(run_output, "r")
+    dictionary = json.load(single_output)
+    dictionary["timestamp"] = timestamp
+    single_output.close()
+    single_output = open(run_output, "w")
+    json.dump(dictionary, single_output)
+    single_output.close()
+    single_output = open(run_output, "e")
+    json_output = single_output.read()
+    output.append(json_output)
 
