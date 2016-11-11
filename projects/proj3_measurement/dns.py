@@ -30,21 +30,10 @@ def run_dig(hostname_filename, output_filename, dns_query_server=None):
         json.dump(result, output)
 
 def parse_dns(out, host_dictionary):
-    out = out.split('\n\n')
-    out = out[:len(out)-1]
-
-    for query in out:
-        lines = query.split('\n')
-        print lines
-        lines = lines[1:]
-
-        print lines
-
-        check_success = lines[3].split()
-        print check_success
-        for line in lines:
-            # print [line]
-            a =1
+    out = out.split('\n')
+    out = out.rstrip().lstrip()
+    for line in out:
+        print [out]
 
 
 def parse_no_dns(out, host_dictionary):
