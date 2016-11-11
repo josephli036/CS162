@@ -42,21 +42,21 @@ def parse_dns(out, host_dictionary):
 
     time = None
     i = 0
-    awnsers = []
+    answers = []
     while i < len(out):
         line = out[i].split()
         if line:
             if line[1] == 'Query':
                 time = line[3]
-            if line[1] == 'ANWSER' or line[1] == 'ADDITIONAL':
+            if line[1] == 'ANSWER' or line[1] == 'ADDITIONAL':
                 line = out[i+1].split()
                 while line:
-                    awnsers.append({utils.QUERIED_NAME_KEY: line[0], utils.ANSWER_DATA_KEY: line[4], utils.TYPE_KEY: line[3], utils.TTL_KEY: line[1]})
+                    answers.append({utils.QUERIED_NAME_KEY: line[0], utils.ANSWER_DATA_KEY: line[4], utils.TYPE_KEY: line[3], utils.TTL_KEY: line[1]})
                     i+=1
                     line = out[i+1].split()
         print line
         i += 1
-    queries = [{utils.TIME_KEY: time, utils.ANSWERS_KEY: awnsers}]
+    queries = [{utils.TIME_KEY: time, utils.ANSWERS_KEY: answers}]
     host_dictionary[utils.QUERIES_KEY] = queries
     return host_dictionary
 
@@ -68,7 +68,7 @@ def parse_no_dns(out, host_dictionary):
     success = False
     queries = []
     for query in out:
-        awnsers = []
+        answers = []
         lines = query.split('\n')
         if lines[1][0] == ';' and lines[0] == '':
             lines = lines[3:]
@@ -83,8 +83,8 @@ def parse_no_dns(out, host_dictionary):
             data = temp[4]
             if d_type == "A" or d_type == "CNAME":
                 success = True
-            awnsers.append({utils.QUERIED_NAME_KEY: queried_name, utils.ANSWER_DATA_KEY: data, utils.TYPE_KEY: d_type, utils.TTL_KEY: TTL})
-        queries.append({utils.TIME_KEY: time, utils.ANSWERS_KEY: awnsers})
+            answers.append({utils.QUERIED_NAME_KEY: queried_name, utils.ANSWER_DATA_KEY: data, utils.TYPE_KEY: d_type, utils.TTL_KEY: TTL})
+        queries.append({utils.TIME_KEY: time, utils.ANSWERS_KEY: answers})
     host_dictionary[utils.SUCCESS_KEY] = success
     host_dictionary[utils.QUERIES_KEY] = queries
     return host_dictionary
