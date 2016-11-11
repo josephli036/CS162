@@ -8,7 +8,7 @@ def run_traceroute(hostnames, num_packets, output_filename):
         ping = subprocess.Popen(["traceroute", "-A", "-q", num_packets, host], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, error = ping.communicate()
         if out:
-            print out
+            # print out
             file.write(out)
         else:
             print 'No trace'
@@ -23,7 +23,7 @@ def parse_traceroute(raw_traceroute_filename, output_filename):
         trace = trace.split('\n')
         result[hostname] = []
         for line in trace[1:len(trace)-1]:
-            print line
+            # print line
             name = re.findall(r"\d  (\S*)", line)[0]
             if name == "*":
                 result[hostname].append([{"name": "None", "ip": "None", "ASN": "None"}])
@@ -32,9 +32,9 @@ def parse_traceroute(raw_traceroute_filename, output_filename):
                 ip = re.findall(r" \((\S*)\) ", line)
                 asn = re.findall(r" \[(\S*)\] ", line)
                 total = []
-                print name
-                print ip
-                print asn
+                # print name
+                # print ip
+                # print asn
                 for i in range(0, len(name)):
                     temp = {"name": name[i], "ip": ip[i]}
                     if asn[i] == "*":
@@ -43,7 +43,7 @@ def parse_traceroute(raw_traceroute_filename, output_filename):
                         temp["ASN"] = asn[i]
                     total.append(temp)
                 result[hostname].append(total)
-    with open(output_filename, 'w') as output:
+    with open(output_filename, 'a') as output:
         json.dump(result, output)
 
                 
