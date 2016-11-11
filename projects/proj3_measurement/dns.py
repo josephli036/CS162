@@ -169,10 +169,44 @@ def get_average_times(filename):
                 final_total += host_time/host_entries
         return [total/entries, final_total/final_entries]
 
+def generate_time_cdfs(json_filename, output_filename):
+    input_dicts = None
+    with open(filename, 'r') as output:
+        input_dicts = json.load(output)
+
+    total_time = []
+    final_time = []
+    if input_dicts:
+        for dictionary in input_dicts:
+            total = 0.0
+            list_dict = dictionary[utils.QUERIES_KEY]
+            for query in list_dict:
+                final = False
+                total += query[utils.TIME_KEY]
+                for answer in answers:
+                    if answer[utils.TYPE_KEY] == "A" or answer[utils.TYPE_KEY] == "CNAME":
+                        final = True
+                if final:
+                    final_time.append(query[utils.TIME_KEY])
+            total_time.append(total)
+
+        total_time = np.sort(total_time)
+        y = np.arange(len(total_time))/float(len(total_time)-1)
+        plt.plot(total_time, y, 'r', label="total_time")
+
+        final_time = np.sort(final_time)
+        y = np.arange(len(final_time))/float(len(final_time)-1)
+        plt.plot(final_time, y, 'b', label="final_time")
+
+        plt.legend()
+
+        plt.savefig(output_filename, bbox_inches='tight')
+
 
 
 
 print get_average_times("dns_output_2.json")
 print get_average_ttls("dns_output_2.json")
+generate_time_cdfs("dns_output_2.json", "dns_cdf.png")
 # run_dig("alexa_top_100", "dns_output_2.json")
 # run_dig("alexa_top_100", "dns_output_other_server.json", '47.138.195.200')
