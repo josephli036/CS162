@@ -33,6 +33,7 @@ def parse_dns(out, host_dictionary):
     out = out[1:]
 
     check_success = out[3].split()[5]
+    print check_success
     success = False
 
     if check_success == 'NOERROR':
@@ -54,7 +55,6 @@ def parse_dns(out, host_dictionary):
                     answers.append({utils.QUERIED_NAME_KEY: line[0], utils.ANSWER_DATA_KEY: line[4], utils.TYPE_KEY: line[3], utils.TTL_KEY: line[1]})
                     i+=1
                     line = out[i+1].split()
-        print line
         i += 1
     queries = [{utils.TIME_KEY: time, utils.ANSWERS_KEY: answers}]
     host_dictionary[utils.QUERIES_KEY] = queries
