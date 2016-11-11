@@ -91,7 +91,7 @@ def parse_no_dns(out, host_dictionary):
 def get_average_times(filename):
     input_dicts = None
     with open(filename, 'r') as output:
-        input_dict = json.load(output)
+        input_dicts = json.load(output)
 
     entries = 0
     total = 0.0
