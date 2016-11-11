@@ -140,7 +140,7 @@ def get_average_ttls(filename):
             if host_entries > 0:
                 four_entries += 1
                 four_total += host_total/host_entries
-        return [four_total/four_entries, four_total/four_entries, four_total/four_entries, four_total/four_entries]
+        return [one_total/one_entries, two_total/two_entries, three_total/three_entries, four_total/four_entries]
 
 def get_average_times(filename):
     input_dicts = None
