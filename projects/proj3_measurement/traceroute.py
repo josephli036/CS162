@@ -69,6 +69,7 @@ with open("tr_a.json", "a+") as output:
     single_output = open(run_output, "r")
     json_output = single_output.read()
     if os.stat("tr_a.json").st_size != 0:
-        output.write('\n')
-    output.write(json_output)
+        output.write('\n' + json_output)
+    else:
+        output.write(json_output)
 
