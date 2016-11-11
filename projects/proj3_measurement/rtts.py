@@ -20,7 +20,7 @@ def plot_median_rtt_cdf(agg_ping_results_filename, output_cdf_filename):
     result = []
     for key in data_dict:
         median = data_dict[key]["median_rtt"]
-        if media != -1.0:
+        if median != -1.0:
             result.append(median)
 
     result = np.sort(result)
