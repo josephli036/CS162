@@ -10,7 +10,7 @@ def run_dig(hostname_filename, output_filename, dns_query_server=None):
         for website in file.readlines():
             websites.append(website.rstrip())
 
-    websites = ["google.com"]
+    websites = ["yahoo.com"]
 
     for host in websites:
         for i in range(1):
@@ -32,8 +32,8 @@ def run_dig(hostname_filename, output_filename, dns_query_server=None):
 def parse_dns(out, host_dictionary):
     out = out.split('\n')
     for line in out:
-        line = line.rstrip().lstrip()
-        print [line]
+        line = line.strip
+        print line
 
 
 def parse_no_dns(out, host_dictionary):
