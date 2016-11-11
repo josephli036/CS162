@@ -34,10 +34,9 @@ def parse_no_dns(out, host_dictionary):
         result = lines[len(lines)-1]
         lines = lines[:len(lines)-1]
         for line in lines:
-            temp = line.split('\t\t\t')
+            temp = line.split()
             queried_name = temp[0]
-            temp = temp[1].split('\t')
-            TTL = temp[0]
+            TTL = temp[1]
             print queried_name
             print TTL
 
