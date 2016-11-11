@@ -212,7 +212,8 @@ def generate_time_cdfs(json_filename, output_filename):
         plt.savefig(output_filename, bbox_inches='tight')
 
 def count_different_dns_responses(filename1, filename2):
-    input_one, input_two = None
+    input_one = None
+    input_two = None
     with open(filename1, 'r') as output1:
         input_one = json.load(output1)
     with open(filename2, 'r') as output2:
