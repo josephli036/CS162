@@ -31,8 +31,8 @@ def run_dig(hostname_filename, output_filename, dns_query_server=None):
 
 def parse_dns(out, host_dictionary):
     out = out.split('\n')
-    out = out.rstrip().lstrip()
     for line in out:
+        line = line.rstrip().lstrip()
         print [line]
 
 
