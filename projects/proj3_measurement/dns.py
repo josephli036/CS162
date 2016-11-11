@@ -88,6 +88,60 @@ def parse_no_dns(out, host_dictionary):
     host_dictionary[utils.QUERIES_KEY] = queries
     return host_dictionary
 
+def get_average_ttls(filename):
+    input_dicts = None
+    with open(filename, 'r') as output:
+        input_dicts = json.load(output)
+
+    one_entries = 0
+    one_total = 0.0
+    two_entries = 0
+    two_total = 0.0
+    three_entries = 0
+    three_total = 0.0
+    four_entries = 0
+    four_total = 0.0
+
+    if input_dicts:
+        for dictionary in input_dicts:
+            list_dict = dictionary[utils.QUERIES_KEY]
+            root_answers = list_dict[0][utils.ANSWERS_KEY]
+            tld_answers = list_dict[1][utils.ANSWERS_KEY]
+            host_time = 0.0
+            host_entries = 0
+            temp_total = 0.0
+            temp_entries = 0
+            for answer in root_answers:
+                temp_total += answer[utils.TTL_KEY]
+                temp_entries += 1
+            one_total += temp_total/temp_entries
+            one_entries += 1
+            temp_total = 0.0
+            temp_entries = 0
+            for answer in tld_answers:
+                temp_total += answer[utils.TTL_KEY]
+                temp_entries += 1
+            two_total += temp_total/temp_entries
+            two_entries += 1
+
+            for i in range(2, len(list_dict)):
+                query = list_dict[query]
+                answers = query[utils.ANSWERS_KEY]
+                temp_total = 0.0
+                temp_entries = 0
+                for answer in answers:
+                    temp_total += answer[utils.TTL_KEY]
+                    temp_entries += 1
+                    if answer[utils.TYPE_KEY] == "A" or answer[utils.TYPE_KEY] == "CNAME":
+                        host_total += answer[utils.TTL_KEY]
+                        host_entries += 1
+                three_total += temp_total/temp_entries
+                three_entries += 1
+            if host_entries > 0:
+                four_entries += 1
+                four_total += host_time/host_entries
+        return [four_total/four_entries, four_total/four_entries, four_total/four_entries, four_total/four_entries]
+
 def get_average_times(filename):
     input_dicts = None
     with open(filename, 'r') as output:
@@ -108,8 +162,6 @@ def get_average_times(filename):
                 total += query[utils.TIME_KEY]
                 for answer in answers:
                     if answer[utils.TYPE_KEY] == "A" or answer[utils.TYPE_KEY] == "CNAME":
-                        print query
-                        print answer
                         host_time += query[utils.TIME_KEY]
                         host_entries += 1
             if host_entries > 0:
@@ -121,5 +173,6 @@ def get_average_times(filename):
 
 
 print get_average_times("dns_output_2.json")
+print get_average_ttls("dns_output_2.json")
 # run_dig("alexa_top_100", "dns_output_2.json")
 # run_dig("alexa_top_100", "dns_output_other_server.json", '47.138.195.200')
