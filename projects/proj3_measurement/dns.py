@@ -13,7 +13,7 @@ def run_dig(hostname_filename, output_filename, dns_query_server=None):
     websites = ["google.com"]
 
     for host in websites:
-        for i in range(5):
+        for i in range(1):
             host_dictionary = {utils.NAME_KEY: host}
             if dns_query_server:
                 dns_run = subprocess.Popen(["dig", host, "@"+str(dns_query_server)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -34,9 +34,11 @@ def parse_dns(out, host_dictionary):
     out = out[:len(out)-1]
 
     for query in out:
-        print lines
         lines = query.split('\n')
+        print lines
         lines = lines[1:]
+
+        print lines
 
         check_success = lines[3].split()
         print check_success
