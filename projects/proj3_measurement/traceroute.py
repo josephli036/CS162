@@ -58,9 +58,11 @@ timestamp = str(time.time())
 run_traceroute(trace_a_websites, "5", 'traceoutput')
 parse_traceroute("traceoutput", run_output)
 with open("tr_a.json", "w") as output:
-    with open(run_output, "w") as single_output:
+    with open(run_output, "r") as single_output:
         dictionary = json.load(single_output)
         dictionary["timestamp"] = timestamp
+        close(single_output)
+    with open(run_output, "w") as single_output
         json.dump(dictionary, single_output)
         json_output = single_output.read()
         output.append(json_output)
