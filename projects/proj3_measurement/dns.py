@@ -34,13 +34,14 @@ def parse_dns(out, host_dictionary):
     out = out[:len(out)-1]
 
     for query in out:
+        print lines
         lines = query.split('\n')
         lines = lines[1:]
 
         check_success = lines[3].split()
         print check_success
         for line in lines:
-            print [line]
+            # print [line]
 
 
 def parse_no_dns(out, host_dictionary):
