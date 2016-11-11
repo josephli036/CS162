@@ -33,8 +33,6 @@ def parse_dns(out, host_dictionary):
     out = out[1:]
 
     check_success = out[3].split()[5]
-    print check_success
-    print str(check_success == 'NOERROR,')
     success = False
 
     if check_success == 'NOERROR,':
@@ -93,5 +91,5 @@ def parse_no_dns(out, host_dictionary):
 
 
 
-# run_dig("alexa_top_100", "dns_output_2.json")
-run_dig("alexa_top_100", "dns_output_2.json", '47.138.195.200')
+run_dig("alexa_top_100", "dns_output_2.json")
+# run_dig("alexa_top_100", "dns_output_other_server.json", '47.138.195.200')
