@@ -2,6 +2,7 @@ import subprocess
 import re
 import json
 import time
+import os
 
 def run_traceroute(hostnames, num_packets, output_filename):
     file = open(output_filename, 'w')
@@ -67,5 +68,7 @@ with open("tr_a.json", "a+") as output:
     single_output.close()
     single_output = open(run_output, "r")
     json_output = single_output.read()
+    if os.stat("tr_a.json").st_size != 0:
+        output.write('\n')
     output.write(json_output)
 
