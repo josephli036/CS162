@@ -25,7 +25,6 @@ def parse_traceroute(raw_traceroute_filename, output_filename):
         trace = trace.split('\n')
         result[hostname] = []
         for line in trace[1:len(trace)-1]:
-            print line
             name = re.findall(r"^\s*\d+\s*(\S*)", line)[0]
             if name == "*":
                 result[hostname].append([{"name": "None", "ip": "None", "ASN": "None"}])
@@ -45,10 +44,10 @@ def parse_traceroute(raw_traceroute_filename, output_filename):
                         temp["ip"] = name[i]
                     if not asn:
                         temp["ASN"] = "None"
-                    elif asn[i] == "*" or asn[i] == 0:
+                    elif asn[i] == "*" or asn[i] == '0' or asn[i] == 'AS0':
                         temp["ASN"] = "None"
                     else:
-                        temp["ASN"] = asn[i]
+                        temp["ASN"] = asn[i][2:]
                     total.append(temp)
                 result[hostname].append(total)
     with open(output_filename, "w") as output:
@@ -96,7 +95,7 @@ run_output = "tr_a_trial.json"
 timestamp = str(time.time())
 run_traceroute(p_servers, "1", 'traceoutput')
 parse_traceroute("traceoutput", run_output)
-with open("tr_a.json", "a+") as output:
+with open("tr_b.json", "a+") as output:
     single_output = open(run_output, "r")
     dictionary = json.load(single_output)
     dictionary["timestamp"] = timestamp
@@ -106,7 +105,7 @@ with open("tr_a.json", "a+") as output:
     single_output.close()
     single_output = open(run_output, "r")
     json_output = single_output.read()
-    if os.stat("tr_a.json").st_size != 0:
+    if os.stat("tr_b.json").st_size != 0:
         output.write('\n' + json_output)
     else:
         output.write(json_output)
