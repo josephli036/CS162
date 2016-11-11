@@ -57,7 +57,7 @@ for website in file.readlines():
 timestamp = str(time.time())
 run_traceroute(trace_a_websites, "5", 'traceoutput')
 parse_traceroute("traceoutput", run_output)
-with open("tr_a.json") as output:
+with open("tr_a.json", "w") as output:
     with open(run_output) as single_output:
         dictionary = json.load(single_output)
         dictionary["timestamp"] = timestamp
