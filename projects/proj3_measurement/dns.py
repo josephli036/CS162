@@ -106,6 +106,8 @@ def get_average_ttls(filename):
 
     if input_dicts:
         for dictionary in input_dicts:
+            if dictionary[utils.SUCCESS_KEY] == False:
+                continue
             list_dict = dictionary[utils.QUERIES_KEY]
             root_answers = list_dict[0][utils.ANSWERS_KEY]
             tld_answers = list_dict[1][utils.ANSWERS_KEY]
@@ -155,6 +157,8 @@ def get_average_times(filename):
     final_total = 0.0
     if input_dicts:
         for dictionary in input_dicts:
+            if dictionary[utils.SUCCESS_KEY] == False:
+                continue
             host_time = 0.0
             host_entries = 0
             list_dict = dictionary[utils.QUERIES_KEY]
@@ -180,6 +184,8 @@ def generate_time_cdfs(json_filename, output_filename):
     final_time = []
     if input_dicts:
         for dictionary in input_dicts:
+            if dictionary[utils.SUCCESS_KEY] == False:
+                continue
             total = 0.0
             list_dict = dictionary[utils.QUERIES_KEY]
             for query in list_dict:
@@ -205,11 +211,63 @@ def generate_time_cdfs(json_filename, output_filename):
 
         plt.savefig(output_filename, bbox_inches='tight')
 
+def count_different_dns_responses(filename1, filename2):
+    input_one. input_two = None
+    with open(filename1, 'r') as output1:
+        input_one = json.load(output1)
+    with open(filename2, 'r') as output2:
+        input_two = json.load(output2)
+
+    one = cddr_helper(input_one)
+    for dictionary in input_two:
+        input_one.append(dictionary)
+    two = cddr_helper(input_one)
+    return [one, two]
+
+
+def cddr_helper(l):
+    terminating = {}
+    changed = 0
+    already_changed = []
+
+    for dictionary in l:
+        host_name = dictionary[utils.NAME_KEY]
+        if host_name in already_changed:
+            continue
+        term = []
+        if dictionary[utils.SUCCESS_KEY] == False:
+            continue
+        list_dict = dictionary[utils.QUERIES_KEY]
+        for query in list_dict:
+            answers = query[utils.ANSWERS_KEY]
+            for answer in answers:
+                if answer[utils.TYPE_KEY] == "A" or answer[utils.TYPE_KEY] == "CNAME":
+                    term.append(utils.ANSWER_DATA_KEY)
+        if terminating.get(host_name) == None:
+            terminating[host_name] = term
+        else:
+            if len(term) != len(terminating[host_name]):
+                changed += 1
+                already_changed.append(host_name)
+                continue
+            for item in term:
+                if item not in terminating[host_name]:
+                    changed += 1
+                    already_changed.append(host_name)
+                    continue
+            for item in terminating[host_name]:
+                if item not in term:
+                    changed += 1
+                    already_changed.append(host_name)
+                    continue
+    return changed
+
 
 
 
 print get_average_times("dns_output_2.json")
 print get_average_ttls("dns_output_2.json")
 generate_time_cdfs("dns_output_2.json", "dns_cdf.png")
+print count_different_dns_responses("dns_output_2.json", "dns_output_2.json")
 # run_dig("alexa_top_100", "dns_output_2.json")
 # run_dig("alexa_top_100", "dns_output_other_server.json", '47.138.195.200')
