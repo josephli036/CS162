@@ -19,7 +19,7 @@ def run_dig(hostname_filename, output_filename, dns_query_server=None):
             dns_run = subprocess.Popen(["dig", "+trace", "+tries=1", "+nofail", "+nodnssec", host], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             out, error = dns_run.communicate()
             if out:
-                host_dictionary = parse_no_dns(out, host_dictionary)
+                queries = parse_no_dns(out, host_dictionary)
 
 def parse_no_dns(out, host_dictionary):
     out = out.split('\n\n')
@@ -30,10 +30,15 @@ def parse_no_dns(out, host_dictionary):
         lines = query.split('\n')
         if lines[1][0] == ';':
             lines = lines[3:]
+        result = lines[len(lines)-1]
+        lines = lines[:len(lines)-1]
         for line in lines:
-            print line
+            queried_names = re.findall(r"^(\S+)\t\t\t")
+            TTLs = re.findall(r"^.*\.\t\t\t(\d+)\t")
+            print queried_names
+            print TTLs
 
-            
+
     return None
 
 
