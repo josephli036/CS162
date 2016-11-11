@@ -12,7 +12,7 @@ def run_dig(hostname_filename, output_filename, dns_query_server=None):
     websites = ["google.com"]
 
     for host in websites:
-        host_dictionary = {"Name": }
+        host_dictionary = {"Name": host}
         if dns_query_server:
             dns_run = subprocess.Popen(["dig", host, "@"+str(dns_query_server)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         else:
