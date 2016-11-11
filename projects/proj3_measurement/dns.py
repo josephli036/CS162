@@ -114,7 +114,7 @@ def get_average_times(filename):
             if host_entries > 0:
                 final_entries += 1
                 final_total += host_time/host_entries
-    return [total/entries, final_total/final_entries]
+        return [total/entries, final_total/final_entries]
 
 
 
