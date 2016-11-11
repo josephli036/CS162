@@ -21,7 +21,7 @@ def run_dig(hostname_filename, output_filename, dns_query_server=None):
 
         if out:
             out = out.split('\n\n')
-            out = out[1].split('\n')
+            out = out[len(out)-1].split('\n')
             for o in out:
                 print [o]
 
