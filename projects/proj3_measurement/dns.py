@@ -125,7 +125,7 @@ def get_average_ttls(filename):
             two_entries += 1
 
             for i in range(2, len(list_dict)):
-                query = list_dict[query]
+                query = list_dict[i]
                 answers = query[utils.ANSWERS_KEY]
                 temp_total = 0.0
                 temp_entries = 0
