@@ -28,7 +28,7 @@ def parse_no_dns(out, host_dictionary):
     for query in out:
         success = False
         lines = query.split('\n')
-        if lines[1][0] == ';':
+        if lines[1][0] == ';' and lines[0] == '':
             lines = lines[3:]
         print lines
         result = lines[len(lines)-1]
