@@ -88,8 +88,36 @@ def parse_no_dns(out, host_dictionary):
     host_dictionary[utils.QUERIES_KEY] = queries
     return host_dictionary
 
+def get_average_times(filename):
+    input_dicts = None
+    with open(filename, 'r') as output:
+        input_dict = json.load(output)
+
+    entries = 0
+    total = 0.0
+    final_entries = 0
+    final_total = 0.0
+    if input_dicts:
+        for dictionary in input_dicts:
+            host_time = 0.0
+            host_entries = 0
+            list_dict = dictionary[utils.QUERIES_KEY]
+            for query in list_dict:
+                answers = query[utils.ANSWERS_KEY]
+                entries += 1
+                total += query[utils.TIME_KEY]
+                for answer in answers:
+                    if answer[utils.TYPE_KEY]:
+                        host_time += query[utils.TIME_KEY]
+                        host_entries += 1
+            if host_entries > 0:
+                final_entries += 1
+                final_total += host_time/host_entries
+    return [total/entries, final_total/final_entries]
 
 
 
-run_dig("alexa_top_100", "dns_output_2.json")
+
+print get_average_times("dns_output_2.json")
+# run_dig("alexa_top_100", "dns_output_2.json")
 # run_dig("alexa_top_100", "dns_output_other_server.json", '47.138.195.200')
