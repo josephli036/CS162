@@ -181,6 +181,7 @@ def generate_time_cdfs(json_filename, output_filename):
             total = 0.0
             list_dict = dictionary[utils.QUERIES_KEY]
             for query in list_dict:
+                answers = query[utils.ANSWERS_KEY]
                 final = False
                 total += query[utils.TIME_KEY]
                 for answer in answers:
