@@ -42,6 +42,7 @@ def parse_dns(out, host_dictionary):
         print check_success
         for line in lines:
             # print [line]
+            a =1
 
 
 def parse_no_dns(out, host_dictionary):
