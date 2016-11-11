@@ -32,7 +32,7 @@ def run_dig(hostname_filename, output_filename, dns_query_server=None):
 def parse_dns(out, host_dictionary):
     out = out.split('\n')
     for line in out:
-        line = line.strip()
+        line = line.split()
         print line
 
 
