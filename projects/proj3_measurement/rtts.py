@@ -26,7 +26,7 @@ def plot_median_rtt_cdf(agg_ping_results_filename, output_cdf_filename):
     result = np.sort(result)
     y = np.arange(len(result))/float(len(result)-1)
     plt.plot(result, y)
-    plt.savefig("rtt_a_media.png", bbox_inches='tight')
+    plt.savefig(output_cdf_filename, bbox_inches='tight')
 
 
 def run_ping(hostnames, num_packets, raw_ping_output_filename, aggregated_ping_output_filename):
@@ -84,5 +84,6 @@ websites = []
 b_websites = ["google.com", "todayhumor.co.kr", "zanvarsity.ac.tz", "taobao.com"]
 for website in file.readlines():
     websites.append(website.rstrip())
-run_ping(websites, 10, 'rtt_a_raw.json', 'rtt_a_agg.json')
-run_ping(b_websites, 500, 'rtt_b_raw.json', 'rtt_b_agg.json')
+# run_ping(websites, 10, 'rtt_a_raw.json', 'rtt_a_agg.json')
+# run_ping(b_websites, 500, 'rtt_b_raw.json', 'rtt_b_agg.json')
+plot_median_rtt_cdf("rtt_a_agg.json", "rtt_a_media.png")
