@@ -10,8 +10,6 @@ def run_dig(hostname_filename, output_filename, dns_query_server=None):
         for website in file.readlines():
             websites.append(website.rstrip())
 
-    websites = ["google.com"]
-
     for host in websites:
         host_dictionary = {utils.NAME_KEY: host}
         if dns_query_server:
@@ -21,7 +19,9 @@ def run_dig(hostname_filename, output_filename, dns_query_server=None):
             out, error = dns_run.communicate()
             if out:
                 queries = parse_no_dns(out, host_dictionary)
-                print queries
+                result.append(queries)
+    with open(output_filename, 'w') as output:
+        json.dump(output, result)
 
 def parse_no_dns(out, host_dictionary):
     out = out.split('\n\n')
