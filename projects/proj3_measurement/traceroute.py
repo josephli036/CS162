@@ -62,7 +62,7 @@ with open("tr_a.json", "w") as output:
         dictionary = json.load(single_output)
         dictionary["timestamp"] = timestamp
         close(single_output)
-    with open(run_output, "w") as single_output
+    with open(run_output, "w") as single_output:
         json.dump(dictionary, single_output)
         json_output = single_output.read()
         output.append(json_output)
