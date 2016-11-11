@@ -20,7 +20,7 @@ def run_dig(hostname_filename, output_filename, dns_query_server=None):
         out, error = dns_run.communicate()
 
         if out:
-            out.split('\n')
+            out = out.split('\n')
             print out
 
 
