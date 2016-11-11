@@ -206,6 +206,7 @@ def generate_time_cdfs(json_filename, output_filename):
         final_time = np.sort(final_time)
         y = np.arange(len(final_time))/float(len(final_time)-1)
         plt.plot(final_time, y, 'b', label="final_time")
+        plt.xscale('log')
 
         plt.legend()
 
@@ -267,8 +268,9 @@ def cddr_helper(l):
 
 
 # print get_average_times("dns_output_2.json")
-print get_average_ttls("dns_output_2.json")
+# print get_average_ttls("dns_output_2.json")
 # generate_time_cdfs("dns_output_2.json", "dns_cdf.png")
-print count_different_dns_responses("dns_output_1.json", "dns_output_2.json")
+# print count_different_dns_responses("dns_output_1.json", "dns_output_2.json")
+# run_dig("alexa_top_100", "dns_output_1.json")
 # run_dig("alexa_top_100", "dns_output_2.json")
-# run_dig("alexa_top_100", "dns_output_other_server.json", '47.138.195.200')
+run_dig("alexa_top_100", "dns_output_other_server.json", '200.195.138.186')
