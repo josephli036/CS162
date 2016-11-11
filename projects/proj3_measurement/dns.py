@@ -6,20 +6,21 @@ import utils
 def run_dig(hostname_filename, output_filename, dns_query_server=None):
     websites = []
     result = []
-    with open('alexa_top_100') as file:
+    with open(hostname_filename) as file:
         for website in file.readlines():
             websites.append(website.rstrip())
 
     for host in websites:
-        host_dictionary = {utils.NAME_KEY: host}
-        if dns_query_server:
-            dns_run = subprocess.Popen(["dig", host, "@"+str(dns_query_server)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        else:
-            dns_run = subprocess.Popen(["dig", "+trace", "+tries=1", "+nofail", "+nodnssec", host], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            out, error = dns_run.communicate()
-            if out:
-                queries = parse_no_dns(out, host_dictionary)
-                result.append(queries)
+        for i in range(5):
+            host_dictionary = {utils.NAME_KEY: host}
+            if dns_query_server:
+                dns_run = subprocess.Popen(["dig", host, "@"+str(dns_query_server)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            else:
+                dns_run = subprocess.Popen(["dig", "+trace", "+tries=1", "+nofail", "+nodnssec", host], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                out, error = dns_run.communicate()
+                if out:
+                    queries = parse_no_dns(out, host_dictionary)
+                    result.append(queries)
     with open(output_filename, 'w') as output:
         json.dump(output, result)
 
@@ -53,9 +54,5 @@ def parse_no_dns(out, host_dictionary):
 
 
 
-    return None
 
-
-
-
-run_dig("sdfsdfsdf", "asdfsadf")
+run_dig("alexa_top_100", "dns_output_1.json")
