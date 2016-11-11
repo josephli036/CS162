@@ -108,7 +108,7 @@ def get_average_times(filename):
                 total += query[utils.TIME_KEY]
                 for answer in answers:
                     if answer[utils.TYPE_KEY] == "A" or answer[utils.TYPE_KEY] == "CNAME":
-                        print answers
+                        print query
                         print answer
                         host_time += query[utils.TIME_KEY]
                         host_entries += 1
