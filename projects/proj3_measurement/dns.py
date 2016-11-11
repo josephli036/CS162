@@ -33,7 +33,7 @@ def parse_dns(out, host_dictionary):
     out = out.split('\n')
     out = out.rstrip().lstrip()
     for line in out:
-        print [out]
+        print [line]
 
 
 def parse_no_dns(out, host_dictionary):
