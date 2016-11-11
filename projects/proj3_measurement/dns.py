@@ -273,4 +273,4 @@ def cddr_helper(l):
 # print count_different_dns_responses("dns_output_1.json", "dns_output_2.json")
 # run_dig("alexa_top_100", "dns_output_1.json")
 # run_dig("alexa_top_100", "dns_output_2.json")
-run_dig("alexa_top_100", "dns_output_other_server.json", '200.195.138.186')
+run_dig("alexa_top_100", "dns_output_other_server.json", '200.195.138.154')
