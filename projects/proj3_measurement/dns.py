@@ -171,7 +171,7 @@ def get_average_times(filename):
 
 def generate_time_cdfs(json_filename, output_filename):
     input_dicts = None
-    with open(filename, 'r') as output:
+    with open(json_filename, 'r') as output:
         input_dicts = json.load(output)
 
     total_time = []
