@@ -34,6 +34,7 @@ def parse_dns(out, host_dictionary):
 
     check_success = out[3].split()[5]
     print check_success
+    print str(check_success == 'NOERROR,')
     success = False
 
     if check_success == 'NOERROR,':
