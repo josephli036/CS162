@@ -65,7 +65,7 @@ with open("tr_a.json", "w") as output:
     single_output = open(run_output, "w")
     json.dump(dictionary, single_output)
     single_output.close()
-    single_output = open(run_output, "e")
+    single_output = open(run_output, "r")
     json_output = single_output.read()
     output.append(json_output)
 
