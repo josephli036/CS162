@@ -107,7 +107,7 @@ def get_average_ttls(filename):
             list_dict = dictionary[utils.QUERIES_KEY]
             root_answers = list_dict[0][utils.ANSWERS_KEY]
             tld_answers = list_dict[1][utils.ANSWERS_KEY]
-            host_time = 0.0
+            host_total = 0.0
             host_entries = 0
             temp_total = 0.0
             temp_entries = 0
@@ -139,7 +139,7 @@ def get_average_ttls(filename):
                 three_entries += 1
             if host_entries > 0:
                 four_entries += 1
-                four_total += host_time/host_entries
+                four_total += host_total/host_entries
         return [four_total/four_entries, four_total/four_entries, four_total/four_entries, four_total/four_entries]
 
 def get_average_times(filename):
