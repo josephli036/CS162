@@ -2,6 +2,8 @@ import subprocess
 import re
 import json
 import utils
+import numpy as np
+import matplotlib.pyplot as plt
 
 def run_dig(hostname_filename, output_filename, dns_query_server=None):
     websites = []
