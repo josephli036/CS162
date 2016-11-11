@@ -25,7 +25,7 @@ def run_dig(hostname_filename, output_filename, dns_query_server=None):
             for query in out:
                 lines = query.split('\n')
                 if lines[1][0] == ';':
-                    lines = lines[3:]
+                    lines = lines[2:]
                 for line in lines:
                     print [lines]
 
