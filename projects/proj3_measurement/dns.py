@@ -1,7 +1,7 @@
 import subprocess
 import re
 import json
-import utils
+import utils.py
 
 def run_dig(hostname_filename, output_filename, dns_query_server=None):
     websites = []
