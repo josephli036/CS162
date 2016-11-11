@@ -22,7 +22,7 @@ def run_dig(hostname_filename, output_filename, dns_query_server=None):
                     queries = parse_no_dns(out, host_dictionary)
                     result.append(queries)
     with open(output_filename, 'w') as output:
-        json.dump(output, result)
+        json.dump(result, output)
 
 def parse_no_dns(out, host_dictionary):
     out = out.split('\n\n')
