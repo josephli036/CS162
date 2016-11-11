@@ -24,9 +24,8 @@ def run_dig(hostname_filename, output_filename, dns_query_server=None):
             out = out[:len(out)-1]
             for query in out:
                 lines = query.split('\n')
-                print lines[0]
-                if lines[0][0] == ';':
-                    lines = lines[2:]
+                if lines[1][0] == ';':
+                    lines = lines[3:]
                 for line in lines:
                     print [lines]
 
