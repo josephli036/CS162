@@ -10,11 +10,16 @@ def run_dig(hostname_filename, output_filename, dns_query_server=None):
         for website in file.readlines():
             websites.append(website.rstrip())
 
+    websites = ["google.com"]
+
     for host in websites:
         for i in range(5):
             host_dictionary = {utils.NAME_KEY: host}
             if dns_query_server:
                 dns_run = subprocess.Popen(["dig", host, "@"+str(dns_query_server)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                out, error = dns_run.communicate()
+                if out:
+                    queries = parse_dns(out, host_dictionary)
             else:
                 dns_run = subprocess.Popen(["dig", "+trace", "+tries=1", "+nofail", "+nodnssec", host], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 out, error = dns_run.communicate()
@@ -23,6 +28,10 @@ def run_dig(hostname_filename, output_filename, dns_query_server=None):
                     result.append(queries)
     with open(output_filename, 'w') as output:
         json.dump(result, output)
+
+def parse_dns(out, host_dictionary):
+    out = out.split('\n\n')
+    print out
 
 def parse_no_dns(out, host_dictionary):
     out = out.split('\n\n')
@@ -55,4 +64,5 @@ def parse_no_dns(out, host_dictionary):
 
 
 
-run_dig("alexa_top_100", "dns_output_1.json")
+# run_dig("alexa_top_100", "dns_output_2.json")
+run_dig("alexa_top_100", "dns_output_2.json", '47.138.195.200')
