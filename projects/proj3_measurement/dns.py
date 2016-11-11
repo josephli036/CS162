@@ -31,11 +31,20 @@ def run_dig(hostname_filename, output_filename, dns_query_server=None):
 
 def parse_dns(out, host_dictionary):
     out = out.split('\n\n')
+    out = out[:len(out)-1]
     print out
+
+    for query in out:
+        lines = query.split('\n')
+        lines = lines[:len(lines)-1]
+        for line in lines:
+            print [line]
 
 def parse_no_dns(out, host_dictionary):
     out = out.split('\n\n')
     out = out[:len(out)-1]
+
+    for query in out:
 
     success = False
     queries = []
