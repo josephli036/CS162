@@ -13,7 +13,7 @@ def run_dig(hostname_filename, output_filename, dns_query_server=None):
     websites = ["google.com"]
 
     for host in websites:
-        host_dictionary = {NAME_KEY: host}
+        host_dictionary = {utils.NAME_KEY: host}
         if dns_query_server:
             dns_run = subprocess.Popen(["dig", host, "@"+str(dns_query_server)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         else:
@@ -50,10 +50,10 @@ def parse_no_dns(out, host_dictionary):
             print data
             if d_type == "A" or d_type == "CNAME":
                 success = True
-            awnsers.append({QUERIED_NAME_KEY: queried_name, ANSWER_DATA_KEY: data, TYPE_KEY: d_type, TTL_KEY: TTL})
-        queries.append({TIME_KEY: time, ANSWERS_KEY: awnsers})
-    host_dictionary[SUCCESS_KEY] = success
-    host_dictionary[QUERIES_KEY] = queries
+            awnsers.append({utils.QUERIED_NAME_KEY: queried_name, utils.ANSWER_DATA_KEY: data, utils.TYPE_KEY: d_type, utils.TTL_KEY: TTL})
+        queries.append({utils.TIME_KEY: time, utils.ANSWERS_KEY: awnsers})
+    host_dictionary[utils.SUCCESS_KEY] = success
+    host_dictionary[utils.QUERIES_KEY] = queries
     return host_dictionary
 
 
