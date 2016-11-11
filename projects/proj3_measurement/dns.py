@@ -10,8 +10,6 @@ def run_dig(hostname_filename, output_filename, dns_query_server=None):
         for website in file.readlines():
             websites.append(website.rstrip())
 
-    websites = ["baidu.com"]
-
     for host in websites:
         for i in range(1):
             host_dictionary = {utils.NAME_KEY: host}
@@ -20,6 +18,7 @@ def run_dig(hostname_filename, output_filename, dns_query_server=None):
                 out, error = dns_run.communicate()
                 if out:
                     queries = parse_dns(out, host_dictionary)
+                    result.append(queries)
             else:
                 dns_run = subprocess.Popen(["dig", "+trace", "+tries=1", "+nofail", "+nodnssec", host], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 out, error = dns_run.communicate()
@@ -49,7 +48,7 @@ def parse_dns(out, host_dictionary):
         if line:
             if line[1] == 'Query':
                 time = line[3]
-            if line[1] == 'ANWSER':
+            if line[1] == 'ANWSER' or line[1] == 'ADDITIONAL':
                 line = out[i+1].split()
                 while line:
                     anwsers.append({utils.QUERIED_NAME_KEY: line[0], utils.ANSWER_DATA_KEY: line[4], utils.TYPE_KEY: line[3], utils.TTL_KEY: line[1]})
@@ -57,6 +56,9 @@ def parse_dns(out, host_dictionary):
                     line = out[i+1].split()
         print line
         i += 1
+    queries = [{utils.TIME_KEY: time, utils.ANSWERS_KEY: awnsers}]
+    host_dictionary[utils.QUERIES_KEY] = queries
+    return host_dictionary
 
 
 def parse_no_dns(out, host_dictionary):
