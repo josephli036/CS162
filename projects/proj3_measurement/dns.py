@@ -44,8 +44,6 @@ def parse_no_dns(out, host_dictionary):
     out = out.split('\n\n')
     out = out[:len(out)-1]
 
-    for query in out:
-
     success = False
     queries = []
     for query in out:
