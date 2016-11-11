@@ -36,7 +36,7 @@ def parse_dns(out, host_dictionary):
 
     for query in out:
         lines = query.split('\n')
-        lines = lines[:len(lines)-1]
+        lines = lines[1:]
         for line in lines:
             print [line]
 
