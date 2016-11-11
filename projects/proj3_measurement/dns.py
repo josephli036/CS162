@@ -33,8 +33,8 @@ def parse_no_dns(out, host_dictionary):
         result = lines[len(lines)-1]
         lines = lines[:len(lines)-1]
         for line in lines:
-            queried_names = re.findall(r"^(\S+)\t\t\t")
-            TTLs = re.findall(r"^.*\.\t\t\t(\d+)\t")
+            queried_name = re.findall(r"^(\S+)\t\t\t", line)
+            TTL = re.findall(r"^.*\.\t\t\t(\d+)\t", line)
             print queried_names
             print TTLs
 
