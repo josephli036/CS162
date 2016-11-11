@@ -20,8 +20,9 @@ def run_dig(hostname_filename, output_filename, dns_query_server=None):
         out, error = dns_run.communicate()
 
         if out:
-            out = out.split('\n')
-            print out
+            out = out.split('\n\n')
+            for o in out:
+                print [o]
 
 
 run_dig("sdfsdfsdf", "asdfsadf")
