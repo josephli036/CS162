@@ -1,6 +1,7 @@
 import subprocess
 import re
 import json
+import os
 
 def run_traceroute(hostnames, num_packets, output_filename):
     file = open(output_filename, 'w')
@@ -44,6 +45,8 @@ def parse_traceroute(raw_traceroute_filename, output_filename):
                     total.append(temp)
                 result[hostname].append(total)
     with open(output_filename, 'a') as output:
+        if os.stat(output_filename).st_size != 0:
+            output.write('\n')
         json.dump(result, output)
 
                 
