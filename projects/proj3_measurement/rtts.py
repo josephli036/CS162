@@ -15,6 +15,7 @@ def median(lst):
             return float(sum(lst[(len(lst)/2)-1:(len(lst)/2)+1]))/2.0
 
 def plot_median_rtt_cdf(agg_ping_results_filename, output_cdf_filename):
+    plt.clf()
     with open(agg_ping_results_filename, "r") as in_file:
         data_dict = json.load(in_file)
     result = []
@@ -26,14 +27,36 @@ def plot_median_rtt_cdf(agg_ping_results_filename, output_cdf_filename):
     result = np.sort(result)
     y = np.arange(len(result))/float(len(result)-1)
     plt.plot(result, y)
+    plt.xscale('log')
     plt.savefig(output_cdf_filename, bbox_inches='tight')
+
+def plot_ping_cdf(raw_ping_results_filename, output_cdf_filename):
+    plt.clf()
+    with open(raw_ping_results_filename, "r") as in_file:
+        data_dict = json.load(in_file)
+    i = 0
+    color = ['r', 'b', 'y', 'k']
+    lines = []
+    legends = []
+    for key in data_dict:
+        result = np.sort(data_dict[key])
+        while result[0] == -1.0:
+            result = result[1:]
+        y = np.arange(len(result))/float(len(result)-1)
+        lines.append(plt.plot(result, y, color[i], label=key))
+        i+=1
+    print i
+    plt.legend(loc=10)
+    plt.xscale('log')
+    plt.savefig(output_cdf_filename, bbox_inches='tight')
+
+
 
 
 def run_ping(hostnames, num_packets, raw_ping_output_filename, aggregated_ping_output_filename):
     raw_output = {}
     agg_output = {}
     for host in hostnames:
-        print host
         lost_count = 0
         ping = subprocess.Popen(["ping", "-c", str(num_packets), host], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, error = ping.communicate()
@@ -42,7 +65,6 @@ def run_ping(hostnames, num_packets, raw_ping_output_filename, aggregated_ping_o
             split = out.split('\n')
             rtts = []
             for i in split:
-                print i
                 if len(rtts) == num_packets:
                     continue
                 rtt = re.findall(r".*time=(\d+)", i)
@@ -72,7 +94,7 @@ def run_ping(hostnames, num_packets, raw_ping_output_filename, aggregated_ping_o
                 agg["median_rtt"] = median(sorted(rtts)[lost_count:])
             agg_output[host] = agg
         else:
-            print 'No ping'
+            return
     with open(raw_ping_output_filename, 'w') as raw_file:
         json.dump(raw_output, raw_file)
     with open(aggregated_ping_output_filename, 'w') as aggregated_file:
@@ -84,6 +106,7 @@ websites = []
 b_websites = ["google.com", "todayhumor.co.kr", "zanvarsity.ac.tz", "taobao.com"]
 for website in file.readlines():
     websites.append(website.rstrip())
-# run_ping(websites, 10, 'rtt_a_raw.json', 'rtt_a_agg.json')
-# run_ping(b_websites, 500, 'rtt_b_raw.json', 'rtt_b_agg.json')
-plot_median_rtt_cdf("rtt_a_agg.json", "rtt_a_media.png")
+run_ping(websites, 10, 'rtt_a_raw.json', 'rtt_a_agg.json')
+run_ping(b_websites, 500, 'rtt_b_raw.json', 'rtt_b_agg.json')
+# plot_median_rtt_cdf("rtt_a_agg.json", "rtt_a_median.png")
+# plot_ping_cdf("rtt_b_raw.json", "rtt_b_4.png")
