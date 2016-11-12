@@ -113,7 +113,7 @@ parse_traceroute("traceoutput", run_output)
 #     else:
 #         output.write(json_output)
 
-print part_one("blah.json")
+# print part_one("blah.json")
 
 # 128.32.112.1
 # 169.229.63.228
