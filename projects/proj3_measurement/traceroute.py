@@ -87,7 +87,7 @@ def part_one(filename):
 
 
 
-# p_servers = ["tpr-route-server.saix.net", "route-server.ip-plus.net", "route-views.oregon-ix.net", "route-views.on.bb.telus.com"]
+p_servers = ["tpr-route-server.saix.net", "route-server.ip-plus.net", "route-views.oregon-ix.net", "route-views.on.bb.telus.com"]
 
 # file = open('alexa_top_100')
 run_output = "tr_a_trial.json"
