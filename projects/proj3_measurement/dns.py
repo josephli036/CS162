@@ -159,12 +159,12 @@ def get_average_times(filename):
         for dictionary in input_dicts:
             if dictionary[utils.SUCCESS_KEY] == False:
                 continue
+            entries += 1
             host_time = 0.0
             host_entries = 0
             list_dict = dictionary[utils.QUERIES_KEY]
             for query in list_dict:
                 answers = query[utils.ANSWERS_KEY]
-                entries += 1
                 total += query[utils.TIME_KEY]
                 for answer in answers:
                     if answer[utils.TYPE_KEY] == "A" or answer[utils.TYPE_KEY] == "CNAME":
@@ -267,10 +267,10 @@ def cddr_helper(l):
 
 
 
-# print get_average_times("dns_output_2.json")
-# print get_average_ttls("dns_output_2.json")
+print get_average_times("dns_output_2.json")
+print get_average_ttls("dns_output_2.json")
 # generate_time_cdfs("dns_output_2.json", "dns_cdf.png")
-# print count_different_dns_responses("dns_output_1.json", "dns_output_2.json")
+# print count_different_dns_responses("dns_output_1.json", "dns_output_other_server.json")
 # run_dig("alexa_top_100", "dns_output_1.json")
 # run_dig("alexa_top_100", "dns_output_2.json")
-run_dig("alexa_top_100", "dns_output_other_server.json", '200.195.138.154')
+# run_dig("alexa_top_100", "dns_output_other_server.json", '200.195.138.154')
