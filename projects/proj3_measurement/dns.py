@@ -267,8 +267,8 @@ def cddr_helper(l):
 
 
 
-print get_average_times("example/dig_sample_output.json")
-print get_average_ttls("example/dig_sample_output.json")
+print get_average_times("examples/dig_sample_output.json")
+print get_average_ttls("examples/dig_sample_output.json")
 # generate_time_cdfs("dns_output_2.json", "dns_cdf.png")
 # print count_different_dns_responses("dns_output_1.json", "dns_output_other_server.json")
 # run_dig("alexa_top_100", "dns_output_1.json")
